@@ -1,8 +1,9 @@
 import Link from 'next/link'
-import { LayoutDashboard, ShoppingBag, Factory, Users, BarChart3, LogOut } from 'lucide-react'
+import { LayoutDashboard, ShoppingBag, Factory, Users, BarChart3, LogOut, ClipboardList } from 'lucide-react'
 
 const NAV = [
   { href: '/admin', label: 'Overview', icon: LayoutDashboard },
+  { href: '/admin/applications', label: 'Applications', icon: ClipboardList },
   { href: '/admin/orders', label: 'Orders', icon: ShoppingBag },
   { href: '/admin/manufacturers', label: 'Manufacturers', icon: Factory },
   { href: '/admin/users', label: 'Users', icon: Users },
