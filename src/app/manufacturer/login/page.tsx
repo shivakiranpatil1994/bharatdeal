@@ -1,39 +1,47 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { createSupabaseBrowser } from '@/lib/supabase'
-import { Factory, Mail, CheckCircle2 } from 'lucide-react'
+import { Factory, Mail, Lock, Eye, EyeOff } from 'lucide-react'
 
 export default function ManufacturerLoginPage() {
+  const router = useRouter()
   const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [sent, setSent] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    const trimmed = email.trim().toLowerCase()
-    if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+    const trimmedEmail = email.trim().toLowerCase()
+    if (!trimmedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
       toast.error('Enter a valid email address')
+      return
+    }
+    if (!password.trim()) {
+      toast.error('Enter your password')
       return
     }
 
     setLoading(true)
     try {
       const supabase = createSupabaseBrowser()
-      const { error } = await supabase.auth.signInWithOtp({
-        email: trimmed,
-        options: {
-          emailRedirectTo: `${window.location.origin}/api/manufacturer/auth-callback`,
-        },
+      const { error } = await supabase.auth.signInWithPassword({
+        email: trimmedEmail,
+        password: password.trim(),
       })
 
       if (error) {
-        toast.error(error.message)
+        toast.error(error.message === 'Invalid login credentials'
+          ? 'Wrong email or password. Try again.'
+          : error.message)
         return
       }
 
-      setSent(true)
+      router.push('/manufacturer/dashboard')
+      router.refresh()
     } catch {
       toast.error('Something went wrong. Please try again.')
     } finally {
@@ -52,42 +60,54 @@ export default function ManufacturerLoginPage() {
           <p className="text-sm text-gray-500 mt-1 text-center">BharatDeal Intelligence Dashboard</p>
         </div>
 
-        {sent ? (
-          <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-6 flex flex-col items-center gap-4 text-center">
-            <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center">
-              <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+        <form onSubmit={handleSubmit} className="bg-white border border-gray-100 rounded-2xl shadow-sm p-6 flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-gray-700">Email</label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@factory.com"
+                autoFocus
+                autoComplete="email"
+                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-gray-100 border border-gray-200 text-gray-800 placeholder:text-gray-400 focus:border-[#E8450A] focus:bg-white focus:outline-none transition-colors"
+              />
             </div>
-            <div>
-              <p className="font-semibold text-gray-900">Check your email</p>
-              <p className="text-sm text-gray-500 mt-1">
-                We sent a magic link to <span className="text-gray-800 font-medium">{email}</span>. Click it to sign in.
-              </p>
-            </div>
-            <p className="text-xs text-gray-400">
-              Didn&apos;t receive it? Check spam or{' '}
-              <button onClick={() => setSent(false)} className="text-[#E8450A] hover:underline">try again</button>.
-            </p>
           </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="bg-white border border-gray-100 rounded-2xl shadow-sm p-6 flex flex-col gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-gray-700">Your registered email</label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@factory.com" autoFocus
-                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-gray-100 border border-gray-200 text-gray-800 placeholder:text-gray-400 focus:border-[#E8450A] focus:bg-white focus:outline-none transition-colors"
-                />
-              </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-gray-700">Password</label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                autoComplete="current-password"
+                className="w-full pl-9 pr-10 py-2.5 rounded-xl bg-gray-100 border border-gray-200 text-gray-800 placeholder:text-gray-400 focus:border-[#E8450A] focus:bg-white focus:outline-none transition-colors"
+              />
+              <button type="button" onClick={() => setShowPassword((v) => !v)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
             </div>
-            <button type="submit" disabled={loading || !email.trim()}
-              className="py-2.5 rounded-xl bg-[#E8450A] hover:bg-orange-700 text-white font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm">
-              {loading ? 'Sending…' : 'Send Magic Link'}
-            </button>
-            <p className="text-center text-xs text-gray-400">No password needed. We&apos;ll send a secure link.</p>
-          </form>
-        )}
+          </div>
+
+          <button type="submit" disabled={loading || !email.trim() || !password.trim()}
+            className="py-2.5 rounded-xl bg-[#E8450A] hover:bg-orange-700 text-white font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm mt-1">
+            {loading ? 'Signing in…' : 'Sign In'}
+          </button>
+
+          {/* Dummy credentials hint — remove in production */}
+          <div className="bg-amber-50 border border-amber-100 rounded-xl p-3 text-xs text-amber-700 space-y-0.5">
+            <p className="font-semibold">Demo credentials</p>
+            <p>Email: <span className="font-mono">manufacturer@bharatdeal.in</span></p>
+            <p>Password: <span className="font-mono">bharatdeal@123</span></p>
+          </div>
+        </form>
       </div>
     </div>
   )

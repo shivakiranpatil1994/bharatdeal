@@ -2,8 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
 const LoginSchema = z.object({
-  secret: z.string().min(1),
+  username: z.string().min(1),
+  password: z.string().min(1),
 })
+
+// Dummy credentials for development — replace with env vars in production
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME ?? 'admin'
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? 'bharatdeal@123'
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,19 +17,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid input' }, { status: 400 })
     }
 
-    if (body.data.secret !== process.env.ADMIN_SECRET) {
-      // Constant-time comparison not critical here since it's not a crypto primitive,
-      // but we add a small fixed delay to slow brute force
-      await new Promise((r) => setTimeout(r, 400))
-      return NextResponse.json({ error: 'Invalid secret' }, { status: 401 })
+    const { username, password } = body.data
+
+    // Small fixed delay to slow brute force
+    await new Promise((r) => setTimeout(r, 400))
+
+    if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
     }
 
     const res = NextResponse.json({ success: true })
-    res.cookies.set('admin_token', process.env.ADMIN_SECRET!, {
+    res.cookies.set('admin_token', process.env.ADMIN_SECRET ?? 'bharatdeal-admin-secret', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 30, // 30 days
+      maxAge: 60 * 60 * 24 * 30,
       path: '/',
     })
     return res
