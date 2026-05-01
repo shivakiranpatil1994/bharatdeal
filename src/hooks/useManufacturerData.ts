@@ -23,39 +23,19 @@ export function useManufacturerData(): ManufacturerData {
     async function load() {
       try {
         const supabase = createSupabaseBrowser()
-        const { data: { user } } = await supabase.auth.getUser()
 
-        if (!user) {
-          // Dev preview: load the first manufacturer from the DB
-          const { data } = await supabase
-            .from('manufacturers')
-            .select('*')
-            .limit(1)
-            .single()
-
-          if (data) {
-            setManufacturer(data)
-            setUserId(data.id)
-          } else {
-            setError('No manufacturer found — run seed migration 006_seed.sql')
-          }
-          setLoading(false)
-          return
-        }
-
-        setUserId(user.id)
-
-        // Look up by email — auth UUID does not need to match manufacturer UUID
-        const { data, error: mfrError } = await supabase
+        // Load first manufacturer directly — no auth required for demo
+        const { data } = await supabase
           .from('manufacturers')
           .select('*')
-          .eq('login_email', user.email!)
+          .limit(1)
           .single()
 
-        if (mfrError || !data) {
-          setError('Manufacturer record not found')
-        } else {
+        if (data) {
           setManufacturer(data)
+          setUserId(data.id)
+        } else {
+          setError('No manufacturer found — run seed SQL first')
         }
       } catch {
         setError('Failed to load manufacturer data')
@@ -63,7 +43,6 @@ export function useManufacturerData(): ManufacturerData {
         setLoading(false)
       }
     }
-
     load()
   }, [])
 
