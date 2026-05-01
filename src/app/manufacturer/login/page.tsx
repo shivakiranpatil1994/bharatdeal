@@ -102,7 +102,7 @@ export default function ManufacturerLoginPage() {
           {/* Dummy credentials hint — remove in production */}
           <div className="bg-amber-50 border border-amber-100 rounded-xl p-3 text-xs text-amber-700 space-y-0.5">
             <p className="font-semibold">Demo credentials</p>
-            <p>Email: <span className="font-mono">manufacturer@bharatdeal.in</span></p>
+            <p>Email: <span className="font-mono">tirupur@bharatdeal.in</span></p>
             <p>Password: <span className="font-mono">bharatdeal@123</span></p>
           </div>
         </form>
