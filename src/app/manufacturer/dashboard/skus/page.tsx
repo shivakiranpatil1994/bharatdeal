@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useManufacturerData } from '@/hooks/useManufacturerData'
 import { createSupabaseBrowser } from '@/lib/supabase'
 import { formatINR } from '@/lib/utils'
@@ -62,8 +62,9 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
 
 export default function SKUsPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { manufacturer, loading: mfrLoading, error } = useManufacturerData()
-  const [activeTab, setActiveTab] = useState<TabId>('sku')
+  const [activeTab, setActiveTab] = useState<TabId>((searchParams.get('tab') as TabId) ?? 'sku')
   const [dayRange, setDayRange] = useState<DayRange>(7)
   const [skuData, setSkuData] = useState<SKUSummary[]>([])
   const [searchTrends, setSearchTrends] = useState<SearchTrend[]>([])

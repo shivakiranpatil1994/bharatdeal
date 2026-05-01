@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useManufacturerData } from '@/hooks/useManufacturerData'
 import { createSupabaseBrowser } from '@/lib/supabase'
 import { formatINR } from '@/lib/utils'
@@ -53,9 +54,11 @@ function Skeleton({ className = '' }: { className?: string }) {
 }
 
 export default function OrdersPage() {
+  const searchParams = useSearchParams()
   const { manufacturer } = useManufacturerData()
   const [orders, setOrders] = useState<Order[]>([])
-  const [tab, setTab] = useState<TabId>('all')
+  const urlStatus = searchParams.get('status') as TabId | null
+  const [tab, setTab] = useState<TabId>(urlStatus ?? 'all')
   const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(true)
   const [updatingId, setUpdatingId] = useState<string | null>(null)
@@ -75,6 +78,7 @@ export default function OrdersPage() {
   }, [manufacturer])
 
   useEffect(() => { fetchOrders() }, [fetchOrders])
+  useEffect(() => { if (urlStatus) setTab(urlStatus) }, [urlStatus])
 
   async function updateStatus(orderId: string, newStatus: string) {
     setUpdatingId(orderId)
