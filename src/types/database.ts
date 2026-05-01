@@ -755,6 +755,98 @@ export interface Database {
         }
         Relationships: []
       }
+      manufacturer_applications: {
+        Row: {
+          id: string
+          business_name: string
+          business_type: string
+          gst_number: string | null
+          pan_number: string
+          registered_address: string
+          city: string
+          state: string
+          pincode: string
+          cluster: string
+          contact_name: string
+          contact_role: string
+          phone: string
+          whatsapp_phone: string
+          email: string
+          password_hash: string
+          store_name: string
+          category: string
+          description: string | null
+          monthly_capacity: number
+          avg_price_paise: number
+          payout_schedule: string
+          shipping_from: string | null
+          bank_account: Json
+          status: string
+          admin_note: string | null
+          reviewed_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          business_name: string
+          business_type: string
+          gst_number?: string | null
+          pan_number: string
+          registered_address: string
+          city: string
+          state: string
+          pincode: string
+          cluster: string
+          contact_name: string
+          contact_role: string
+          phone: string
+          whatsapp_phone: string
+          email: string
+          password_hash: string
+          store_name: string
+          category: string
+          description?: string | null
+          monthly_capacity?: number
+          avg_price_paise?: number
+          payout_schedule?: string
+          shipping_from?: string | null
+          bank_account?: Json
+          status?: string
+          admin_note?: string | null
+          reviewed_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          business_name?: string
+          business_type?: string
+          gst_number?: string | null
+          pan_number?: string
+          registered_address?: string
+          city?: string
+          state?: string
+          pincode?: string
+          cluster?: string
+          contact_name?: string
+          contact_role?: string
+          phone?: string
+          whatsapp_phone?: string
+          email?: string
+          password_hash?: string
+          store_name?: string
+          category?: string
+          description?: string | null
+          monthly_capacity?: number
+          avg_price_paise?: number
+          payout_schedule?: string
+          shipping_from?: string | null
+          bank_account?: Json
+          status?: string
+          admin_note?: string | null
+          reviewed_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       manufacturer_today_stats: {
