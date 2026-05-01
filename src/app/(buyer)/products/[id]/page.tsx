@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge'
 import { formatINR } from '@/lib/utils'
 import { ArrowLeft, MapPin, Shield, Truck, Zap } from 'lucide-react'
 import { AddToCartSection } from './AddToCartSection'
+import { ViewerCount } from '@/components/buyer/ViewerCount'
+import { GroupBuyCounter } from '@/components/buyer/GroupBuyCounter'
 
 export const revalidate = 30
 
@@ -144,6 +146,9 @@ export default async function ProductDetailPage({ params }: Props) {
           </div>
         )}
 
+        {/* Live viewer count */}
+        <ViewerCount productId={product.id} />
+
         {/* Stock warning */}
         {product.stock <= 10 && product.stock > 0 && (
           <p className="text-sm text-amber-400 font-medium">
@@ -153,6 +158,9 @@ export default async function ProductDetailPage({ params }: Props) {
 
         {/* Add to cart / checkout — Client Component */}
         <AddToCartSection product={product} />
+
+        {/* Group buy */}
+        <GroupBuyCounter productId={product.id} />
 
         {/* Description */}
         {product.description && (

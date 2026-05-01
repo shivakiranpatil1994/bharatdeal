@@ -9,6 +9,20 @@ export function verifyRazorpayWebhook(body: string, signature: string): boolean 
   return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature))
 }
 
+// Verifies Razorpay payment signature: HMAC-SHA256(orderId|paymentId, KEY_SECRET)
+export function verifyRazorpayPayment(
+  razorpayOrderId: string,
+  razorpayPaymentId: string,
+  signature: string
+): boolean {
+  const payload = `${razorpayOrderId}|${razorpayPaymentId}`
+  const expected = crypto
+    .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!)
+    .update(payload)
+    .digest('hex')
+  return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature))
+}
+
 export function verifyShiprocketWebhook(body: string, token: string): boolean {
   return token === process.env.SHIPROCKET_WEBHOOK_TOKEN
 }

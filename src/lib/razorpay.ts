@@ -1,9 +1,12 @@
 import Razorpay from 'razorpay'
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_KEY_SECRET!,
-})
+// Lazy init — avoid throwing at module evaluation when env vars are absent (e.g. build time)
+function getRazorpay() {
+  return new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID!,
+    key_secret: process.env.RAZORPAY_KEY_SECRET!,
+  })
+}
 
 export interface CreateOrderParams {
   amountPaise: number
@@ -13,7 +16,7 @@ export interface CreateOrderParams {
 }
 
 export async function createRazorpayOrder(params: CreateOrderParams) {
-  return razorpay.orders.create({
+  return getRazorpay().orders.create({
     amount: params.amountPaise,
     currency: params.currency ?? 'INR',
     receipt: params.receipt,
@@ -22,5 +25,5 @@ export async function createRazorpayOrder(params: CreateOrderParams) {
 }
 
 export async function fetchPayment(paymentId: string) {
-  return razorpay.payments.fetch(paymentId)
+  return getRazorpay().payments.fetch(paymentId)
 }

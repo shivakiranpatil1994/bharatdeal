@@ -1,0 +1,11 @@
+[functions.refresh-stats]
+schedule = "*/5 * * * *"
+
+[functions.aggregate-metrics]
+schedule = "0 * * * *"
+
+[functions.compute-search-trends]
+schedule = "0 3 * * *"
+
+[functions.weekly-ai-report]
+schedule = "30 2 * * 1"
