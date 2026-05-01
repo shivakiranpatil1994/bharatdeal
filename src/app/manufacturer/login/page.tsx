@@ -1,13 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { createSupabaseBrowser } from '@/lib/supabase'
 import { Factory, Mail, Lock, Eye, EyeOff } from 'lucide-react'
 
 export default function ManufacturerLoginPage() {
-  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -40,8 +38,8 @@ export default function ManufacturerLoginPage() {
         return
       }
 
-      router.push('/manufacturer/dashboard')
-      router.refresh()
+      // Full page reload so middleware picks up the new session cookie
+      window.location.href = '/manufacturer/dashboard'
     } catch {
       toast.error('Something went wrong. Please try again.')
     } finally {
