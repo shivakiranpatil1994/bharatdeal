@@ -45,10 +45,11 @@ export function useManufacturerData(): ManufacturerData {
 
         setUserId(user.id)
 
+        // Look up by email — auth UUID does not need to match manufacturer UUID
         const { data, error: mfrError } = await supabase
           .from('manufacturers')
           .select('*')
-          .eq('id', user.id)
+          .eq('login_email', user.email!)
           .single()
 
         if (mfrError || !data) {
