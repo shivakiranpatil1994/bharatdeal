@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useManufacturerData } from '@/hooks/useManufacturerData'
 import { createSupabaseBrowser } from '@/lib/supabase'
@@ -53,7 +53,7 @@ function Skeleton({ className = '' }: { className?: string }) {
   return <div className={`animate-pulse rounded-xl bg-gray-100 ${className}`} />
 }
 
-export default function OrdersPage() {
+function OrdersPage() {
   const searchParams = useSearchParams()
   const { manufacturer } = useManufacturerData()
   const [orders, setOrders] = useState<Order[]>([])
@@ -299,4 +299,8 @@ export default function OrdersPage() {
       )}
     </div>
   )
+}
+
+export default function OrdersPageWrapper() {
+  return <Suspense fallback={<div className="p-6 animate-pulse text-gray-400 text-sm">Loading…</div>}><OrdersPage /></Suspense>
 }

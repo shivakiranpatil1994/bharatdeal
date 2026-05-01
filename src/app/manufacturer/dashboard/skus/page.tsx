@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useManufacturerData } from '@/hooks/useManufacturerData'
 import { createSupabaseBrowser } from '@/lib/supabase'
@@ -60,7 +60,7 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
   )
 }
 
-export default function SKUsPage() {
+function SKUsPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { manufacturer, loading: mfrLoading, error } = useManufacturerData()
@@ -316,4 +316,8 @@ export default function SKUsPage() {
       )}
     </div>
   )
+}
+
+export default function SKUsPageWrapper() {
+  return <Suspense fallback={<div className="p-6 animate-pulse text-gray-400 text-sm">Loading…</div>}><SKUsPage /></Suspense>
 }

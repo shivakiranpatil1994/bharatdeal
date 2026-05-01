@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useManufacturerData } from '@/hooks/useManufacturerData'
 import { createSupabaseBrowser } from '@/lib/supabase'
@@ -46,7 +46,7 @@ function StarRating({ rating }: { rating: number }) {
   )
 }
 
-export default function PerformancePage() {
+function PerformancePage() {
   const searchParams = useSearchParams()
   const { manufacturer } = useManufacturerData()
   const [tab, setTab] = useState<TabId>((searchParams.get('tab') as TabId) ?? 'score')
@@ -295,4 +295,8 @@ export default function PerformancePage() {
       )}
     </div>
   )
+}
+
+export default function PerformancePageWrapper() {
+  return <Suspense fallback={<div className="p-6 animate-pulse text-gray-400 text-sm">Loading…</div>}><PerformancePage /></Suspense>
 }

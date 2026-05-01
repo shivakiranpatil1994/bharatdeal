@@ -7,6 +7,7 @@ import { createSupabaseBrowser } from '@/lib/supabase'
 import { formatINR } from '@/lib/utils'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell, Legend } from 'recharts'
 import { Wallet, TrendingUp, Clock, CheckCircle2, Sparkles, MapPin, Package } from 'lucide-react'
+import { Suspense } from 'react'
 
 type TabId = 'earnings' | 'payouts' | 'statements'
 
@@ -34,7 +35,7 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
   )
 }
 
-export default function FinancesPage() {
+function FinancesPage() {
   const searchParams = useSearchParams()
   const { manufacturer } = useManufacturerData()
   const [tab, setTab] = useState<TabId>((searchParams.get('tab') as TabId) ?? 'earnings')
@@ -317,4 +318,8 @@ export default function FinancesPage() {
       )}
     </div>
   )
+}
+
+export default function FinancesPageWrapper() {
+  return <Suspense fallback={<div className="p-6 animate-pulse text-gray-400 text-sm">Loading…</div>}><FinancesPage /></Suspense>
 }
