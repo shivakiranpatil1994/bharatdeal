@@ -6,7 +6,7 @@ import { useManufacturerData } from '@/hooks/useManufacturerData'
 import { createSupabaseBrowser } from '@/lib/supabase'
 import { formatINR } from '@/lib/utils'
 import type { Database } from '@/types/database'
-import { Search, Package, ArrowLeft, Zap, ZapOff, AlertCircle, Plus, X, Clock, CheckCircle2, XCircle } from 'lucide-react'
+import { Search, Package, ArrowLeft, Zap, ZapOff, AlertCircle, Plus, X, Clock, CheckCircle2, XCircle, Pencil, Check, ToggleLeft, ToggleRight } from 'lucide-react'
 
 type Product = Database['public']['Tables']['products']['Row']
 
@@ -45,6 +45,10 @@ export default function ProductsPage() {
   const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(true)
   const [togglingId, setTogglingId] = useState<string | null>(null)
+  const [editingPrice, setEditingPrice] = useState<string | null>(null) // product id being edited
+  const [priceInput, setPriceInput] = useState('')
+  const [savingPrice, setSavingPrice] = useState<string | null>(null)
+  const [togglingStock, setTogglingStock] = useState<string | null>(null)
   const [showAddModal, setShowAddModal] = useState(false)
   const [form, setForm] = useState(EMPTY_FORM)
   const [submitting, setSubmitting] = useState(false)
@@ -87,6 +91,31 @@ export default function ProductsPage() {
     }).eq('id', product.id)
     setProducts((prev) => prev.map((p) => p.id === product.id ? { ...p, is_flash_deal: newVal } : p))
     setTogglingId(null)
+  }
+
+  function startEditPrice(product: Product) {
+    setEditingPrice(product.id)
+    setPriceInput(String(Math.round(product.price_paise / 100)))
+  }
+
+  async function savePrice(product: Product) {
+    const newPricePaise = Math.round(parseFloat(priceInput) * 100)
+    if (!newPricePaise || newPricePaise <= 0) { setEditingPrice(null); return }
+    setSavingPrice(product.id)
+    const supabase = createSupabaseBrowser()
+    await supabase.from('products').update({ price_paise: newPricePaise }).eq('id', product.id)
+    setProducts(prev => prev.map(p => p.id === product.id ? { ...p, price_paise: newPricePaise } : p))
+    setSavingPrice(null)
+    setEditingPrice(null)
+  }
+
+  async function toggleInStock(product: Product) {
+    setTogglingStock(product.id)
+    const supabase = createSupabaseBrowser()
+    const newStock = product.stock === 0 ? 50 : 0
+    await supabase.from('products').update({ stock: newStock }).eq('id', product.id)
+    setProducts(prev => prev.map(p => p.id === product.id ? { ...p, stock: newStock } : p))
+    setTogglingStock(null)
   }
 
   async function submitProduct() {
@@ -197,9 +226,9 @@ export default function ProductsPage() {
         <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
           <div className="px-5 py-3 border-b border-gray-100 bg-gray-50 flex items-center gap-4">
             <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex-1">Product</span>
-            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide w-24 hidden sm:block">Price</span>
-            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide w-28 hidden sm:block">Stock</span>
-            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide w-32 text-right">Status</span>
+            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide w-32 hidden sm:block">Price</span>
+            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide w-28 hidden sm:block">In Stock</span>
+            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide w-32 text-right">Flash Deal</span>
           </div>
           <div className="divide-y divide-gray-50">
             {filtered.map((product) => {
@@ -227,7 +256,10 @@ export default function ProductsPage() {
                       {product.is_flash_deal && product.approval_status === 'approved' && (
                         <span className="text-xs px-1.5 py-0.5 rounded bg-orange-50 text-[#E8450A] font-medium">⚡ Flash</span>
                       )}
-                      <span className="sm:hidden"><StockBadge stock={product.stock} /></span>
+                      <button onClick={() => toggleInStock(product)} disabled={togglingStock === product.id}
+                        className={`sm:hidden flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border font-semibold transition-all ${product.stock > 0 ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-gray-100 text-gray-400 border-gray-200'}`}>
+                        {product.stock > 0 ? '● In Stock' : '○ Out'}
+                      </button>
                     </div>
                     {/* Rejection note */}
                     {product.approval_status === 'rejected' && product.approval_note && (
@@ -235,17 +267,57 @@ export default function ProductsPage() {
                     )}
                   </div>
 
-                  {/* Price */}
-                  <div className="w-24 hidden sm:block">
-                    <p className="font-['JetBrains_Mono',monospace] text-sm font-semibold text-[#E8450A]">{formatINR(product.price_paise)}</p>
-                    {product.mrp_paise && product.mrp_paise > product.price_paise && (
-                      <p className="font-['JetBrains_Mono',monospace] text-xs text-gray-400 line-through">{formatINR(product.mrp_paise)}</p>
+                  {/* Price — inline editable */}
+                  <div className="w-32 hidden sm:block">
+                    {editingPrice === product.id ? (
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs text-gray-400 font-semibold">₹</span>
+                        <input
+                          type="number" min="1" value={priceInput}
+                          onChange={e => setPriceInput(e.target.value)}
+                          onKeyDown={e => { if (e.key === 'Enter') savePrice(product); if (e.key === 'Escape') setEditingPrice(null) }}
+                          autoFocus
+                          className="w-20 px-2 py-1 rounded-lg border border-[#E8450A] text-sm font-['JetBrains_Mono',monospace] font-semibold text-gray-800 focus:outline-none"
+                        />
+                        <button onClick={() => savePrice(product)} disabled={savingPrice === product.id}
+                          className="p-1 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-colors">
+                          <Check className="w-3 h-3" />
+                        </button>
+                        <button onClick={() => setEditingPrice(null)}
+                          className="p-1 rounded-lg bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors">
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ) : (
+                      <button onClick={() => startEditPrice(product)}
+                        className="group flex items-center gap-1.5 hover:bg-orange-50 rounded-lg px-1.5 py-0.5 transition-colors">
+                        <div>
+                          <p className="font-['JetBrains_Mono',monospace] text-sm font-semibold text-[#E8450A]">{formatINR(product.price_paise)}</p>
+                          {product.mrp_paise && product.mrp_paise > product.price_paise && (
+                            <p className="font-['JetBrains_Mono',monospace] text-xs text-gray-400 line-through">{formatINR(product.mrp_paise)}</p>
+                          )}
+                        </div>
+                        <Pencil className="w-3 h-3 text-gray-300 group-hover:text-[#E8450A] transition-colors flex-shrink-0" />
+                      </button>
                     )}
                   </div>
 
-                  {/* Stock */}
+                  {/* In Stock toggle */}
                   <div className="w-28 hidden sm:block">
-                    <StockBadge stock={product.stock} />
+                    <button
+                      onClick={() => toggleInStock(product)}
+                      disabled={togglingStock === product.id || product.approval_status !== 'approved'}
+                      title={product.stock > 0 ? 'Mark as out of stock' : 'Mark as in stock (sets stock to 50)'}
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all disabled:opacity-40 ${
+                        product.stock > 0
+                          ? 'bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-100'
+                          : 'bg-gray-100 text-gray-400 border-gray-200 hover:bg-gray-200'
+                      }`}>
+                      {product.stock > 0
+                        ? <><ToggleRight className="w-4 h-4" /> In Stock</>
+                        : <><ToggleLeft className="w-4 h-4" /> Out of Stock</>
+                      }
+                    </button>
                   </div>
 
                   {/* Approval status / flash toggle */}
@@ -270,7 +342,7 @@ export default function ProductsPage() {
             })}
           </div>
           <div className="px-5 py-3 border-t border-gray-100 bg-gray-50">
-            <p className="text-xs text-gray-400">New products require admin approval before going live. Flash deals are seller-funded.</p>
+            <p className="text-xs text-gray-400">Click the price to edit it inline. In Stock toggle marks product as available/unavailable. New products need admin approval.</p>
           </div>
         </div>
       )}
