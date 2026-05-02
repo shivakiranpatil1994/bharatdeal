@@ -31,35 +31,57 @@ export async function generateMetadata({ params }: Props) {
   const supabase = await createSupabaseServer()
   const { data } = await supabase
     .from('products')
-    .select('title, description, images, price_paise, mrp_paise, category, manufacturers(name, city, state)')
+    .select('title, title_hindi, description, images, price_paise, mrp_paise, category, subcategory, sizes, colors, manufacturers(name, city, state, cluster, category)')
     .eq('id', id)
     .single()
 
   if (!data) return { title: 'Product Not Found' }
 
-  const mfr = data.manufacturers as { name: string; city: string; state: string } | null
+  const mfr = data.manufacturers as { name: string; city: string; state: string; cluster: string; category: string } | null
   const priceINR = (data.price_paise / 100).toFixed(2)
-  const title = `${data.title} — Buy at ₹${Math.round(data.price_paise / 100)} | BharatDeal`
-  const description = data.description
-    ? `${data.description.slice(0, 140)}. Factory direct price ₹${Math.round(data.price_paise / 100)}. Free delivery, easy returns.`
-    : `Buy ${data.title} at factory direct price ₹${Math.round(data.price_paise / 100)} on BharatDeal. Free delivery, 7-day returns, COD available.`
-  const image = data.images?.[0] ?? 'https://bharatdeal.in/og-default.jpg'
+  const priceDisplay = Math.round(data.price_paise / 100)
+
+  // Title: product name + price signal (drives CTR in SERPs)
+  const title = `${data.title} — Buy at ₹${priceDisplay} | BharatDeal`
+
+  // Description: pulled directly from manufacturer-entered description, padded with conversion signals
+  const descriptionBase = data.description
+    ? data.description.replace(/\n/g, ' ').slice(0, 150).trim()
+    : `${data.title} from ${mfr?.city ?? 'India'}`
+  const description = `${descriptionBase}. Factory price ₹${priceDisplay}. Free delivery, 7-day returns, COD available.`
+
+  // Keywords: built from every field manufacturers fill in — title words, description words,
+  // category, subcategory, sizes, colors, city, cluster, manufacturer name
+  const titleWords = data.title.split(/\s+/).filter(w => w.length > 3)
+  const descWords = data.description
+    ? [...new Set(data.description.toLowerCase().split(/\W+/).filter(w => w.length > 4))].slice(0, 8)
+    : []
+  const keywords = [
+    ...titleWords,
+    data.category,
+    data.subcategory,
+    ...(data.sizes ?? []),
+    ...(data.colors ?? []),
+    mfr?.name,
+    mfr?.city,
+    mfr?.cluster,
+    mfr?.category,
+    ...descWords,
+    'factory direct',
+    'buy online India',
+    'free delivery',
+    'COD available',
+    `buy ${data.category} online`,
+    `${data.category} lowest price`,
+  ].filter((v): v is string => typeof v === 'string' && v.length > 1)
+
+  const image = data.images?.[0] ?? '/og-default.jpg'
   const url = `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://bharatdeal.in'}/products/${id}`
 
   return {
     title,
     description,
-    keywords: [
-      data.title,
-      data.category,
-      mfr?.name,
-      mfr?.city,
-      'factory direct',
-      'buy online India',
-      'cheap price',
-      'free delivery',
-      'COD available',
-    ].filter(Boolean).join(', '),
+    keywords: [...new Set(keywords)].join(', '),
     alternates: { canonical: url },
     robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
     openGraph: {
