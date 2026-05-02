@@ -116,11 +116,7 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
             </div>
             <p className="text-xs text-green-600 font-medium">✓ Free delivery on all orders</p>
             <Link
-              href={
-                items.length === 1
-                  ? `/checkout?productId=${items[0].productId}&quantity=${items[0].quantity}${items[0].size ? `&size=${items[0].size}` : ''}${items[0].color ? `&color=${items[0].color}` : ''}`
-                  : '/cart'
-              }
+              href="/checkout?cart=1"
               onClick={onClose}
               className="block w-full py-3 rounded-xl bg-[#E8450A] hover:bg-orange-700 text-white font-bold text-center transition-colors"
             >

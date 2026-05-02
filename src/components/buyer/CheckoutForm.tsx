@@ -5,7 +5,9 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { track } from '@/lib/analytics'
 import { formatINR } from '@/lib/utils'
-import { Phone, MapPin, CreditCard, ChevronRight, Package, ShieldCheck, Truck, RefreshCw, Check, User } from 'lucide-react'
+import { useCart } from '@/context/CartContext'
+import { Phone, MapPin, CreditCard, ChevronRight, Package, ShieldCheck, Truck, RefreshCw, Check, User, ShoppingBag } from 'lucide-react'
+import Image from 'next/image'
 
 interface Product {
   id: string
@@ -14,9 +16,11 @@ interface Product {
   images: string[]
 }
 
+// cartMode=true: product/quantity/size/color are all undefined
 interface CheckoutFormProps {
-  product: Product
-  quantity: number
+  cartMode?: true
+  product?: Product
+  quantity?: number
   size?: string
   color?: string
 }
@@ -30,8 +34,9 @@ declare global {
 
 type Step = 'login' | 'address' | 'payment'
 
-export default function CheckoutForm({ product, quantity, size, color }: CheckoutFormProps) {
+export default function CheckoutForm({ cartMode, product, quantity = 1, size, color }: CheckoutFormProps) {
   const router = useRouter()
+  const { items, totalPaise: cartTotal, count, clearCart } = useCart()
   const [loading, setLoading] = useState(false)
   const [step, setStep] = useState<Step>('login')
 
@@ -47,7 +52,15 @@ export default function CheckoutForm({ product, quantity, size, color }: Checkou
   })
   const [errors, setErrors] = useState<Partial<typeof form>>({})
 
-  const totalPaise = product.price_paise * quantity
+  // In cart mode, default to COD (only supported payment method for multi-item cart)
+  useEffect(() => {
+    if (cartMode) {
+      setForm(f => ({ ...f, paymentMethod: 'cod' }))
+    }
+  }, [cartMode])
+
+  // Derived total: cart mode uses cart total, single mode uses product price
+  const totalPaise = cartMode ? cartTotal : (product?.price_paise ?? 0) * quantity
 
   // Pre-fill from localStorage for returning users
   useEffect(() => {
@@ -106,6 +119,56 @@ export default function CheckoutForm({ product, quantity, size, color }: Checkou
     try {
       const cleanPhone = phone.replace(/\D/g, '').slice(-10)
 
+      // Save to localStorage for next visit
+      localStorage.setItem('bd_phone', cleanPhone)
+      localStorage.setItem('bd_name', form.buyerName.trim())
+      localStorage.setItem('bd_pincode', form.buyerPincode)
+      localStorage.setItem('bd_address', form.buyerAddress.trim())
+
+      // ── CART MODE: create one order per item (COD only) ──
+      if (cartMode) {
+        let allSucceeded = true
+        for (const item of items) {
+          track('checkout_started', { product_id: item.productId, quantity: item.quantity, payment_method: 'cod', amount_paise: item.pricePaise * item.quantity })
+          const res = await fetch('/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              productId: item.productId,
+              buyerPhone: cleanPhone,
+              buyerName: form.buyerName.trim(),
+              buyerPincode: form.buyerPincode,
+              buyerAddress: form.buyerAddress.trim(),
+              quantity: item.quantity,
+              size: item.size || undefined,
+              color: item.color || undefined,
+              paymentMethod: 'cod',
+            }),
+          })
+          const data = await res.json() as { error?: string; orderId?: string }
+          if (!res.ok) {
+            toast.error(`Failed to order "${item.title}": ${data.error ?? 'Unknown error'}`)
+            allSucceeded = false
+          } else {
+            track('order_placed', { order_id: data.orderId, payment_method: 'cod', amount_paise: item.pricePaise * item.quantity })
+          }
+        }
+        if (allSucceeded) {
+          clearCart()
+          toast.success('All orders placed successfully!')
+          router.push('/?ordered=1')
+        }
+        setLoading(false)
+        return
+      }
+
+      // ── SINGLE PRODUCT MODE ──
+      if (!product) {
+        toast.error('Product not found. Please try again.')
+        setLoading(false)
+        return
+      }
+
       track('checkout_started', { product_id: product.id, quantity, payment_method: form.paymentMethod, amount_paise: totalPaise })
 
       const res = await fetch('/api/orders', {
@@ -124,19 +187,13 @@ export default function CheckoutForm({ product, quantity, size, color }: Checkou
         }),
       })
 
-      const data = await res.json()
+      const data = await res.json() as { error?: string; orderId?: string; razorpayOrderId?: string; razorpayAmount?: number; isCodDeposit?: boolean }
 
       if (!res.ok) {
         toast.error(data.error ?? 'Something went wrong. Please try again.')
         setLoading(false)
         return
       }
-
-      // Save to localStorage for next visit
-      localStorage.setItem('bd_phone', cleanPhone)
-      localStorage.setItem('bd_name', form.buyerName.trim())
-      localStorage.setItem('bd_pincode', form.buyerPincode)
-      localStorage.setItem('bd_address', form.buyerAddress.trim())
 
       // Pure COD, no deposit
       if (!data.razorpayOrderId) {
@@ -180,7 +237,7 @@ export default function CheckoutForm({ product, quantity, size, color }: Checkou
                 orderId: data.orderId,
               }),
             })
-            const verifyData = await verifyRes.json()
+            const verifyData = await verifyRes.json() as { orderId?: string }
             if (!verifyRes.ok) { toast.error('Payment verification failed. Contact support.'); return }
             track('order_placed', { order_id: verifyData.orderId, payment_method: form.paymentMethod, amount_paise: displayAmount })
             router.push(`/orders/${verifyData.orderId}?placed=1`)
@@ -204,28 +261,63 @@ export default function CheckoutForm({ product, quantity, size, color }: Checkou
     return `w-full px-4 py-3 rounded-xl border ${hasError ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-white'} text-gray-900 placeholder:text-gray-400 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100 transition-all text-sm`
   }
 
-  // ── Mobile order summary (shown on mobile above the form) ──
-  const MobileSummary = () => (
-    <div className="lg:hidden bg-white rounded-2xl border border-gray-200 p-4 mb-5">
-      <div className="flex gap-3 items-center">
-        {product.images[0] && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={product.images[0]} alt={product.title} className="w-14 h-14 rounded-xl object-cover flex-shrink-0 border border-gray-100" />
-        )}
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-gray-900 line-clamp-1">{product.title}</p>
-          <p className="text-xs text-gray-400 mt-0.5">
-            {quantity} item{quantity > 1 ? 's' : ''}
-            {size ? ` · ${size}` : ''}{color ? ` · ${color}` : ''}
-          </p>
+  // ── Mobile order summary ──
+  const MobileSummary = () => {
+    if (cartMode) {
+      return (
+        <div className="lg:hidden bg-white rounded-2xl border border-gray-200 p-4 mb-5">
+          <p className="text-xs font-semibold text-gray-500 mb-3">{count} item{count !== 1 ? 's' : ''} in cart</p>
+          <div className="space-y-2 max-h-40 overflow-y-auto">
+            {items.map((item) => (
+              <div key={`${item.productId}-${item.size}-${item.color}`} className="flex items-center gap-2">
+                <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100 border border-gray-100 flex-shrink-0">
+                  {item.image ? (
+                    <Image src={item.image} alt={item.title} width={40} height={40} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <ShoppingBag className="w-4 h-4 text-gray-300" />
+                    </div>
+                  )}
+                </div>
+                <p className="text-xs text-gray-700 flex-1 line-clamp-1">{item.title}</p>
+                <p className="text-xs font-bold text-gray-900 font-['JetBrains_Mono',monospace] flex-shrink-0">
+                  {formatINR(item.pricePaise * item.quantity)}
+                </p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center">
+            <p className="text-sm font-bold text-gray-900">Total</p>
+            <p className="font-bold text-gray-900 font-['JetBrains_Mono',monospace]">{formatINR(cartTotal)}</p>
+          </div>
+          <p className="text-xs text-green-600 mt-1">FREE delivery</p>
         </div>
-        <div className="text-right flex-shrink-0">
-          <p className="font-bold text-gray-900 font-['JetBrains_Mono',monospace]">{formatINR(totalPaise)}</p>
-          <p className="text-xs text-green-600">FREE delivery</p>
+      )
+    }
+
+    if (!product) return null
+    return (
+      <div className="lg:hidden bg-white rounded-2xl border border-gray-200 p-4 mb-5">
+        <div className="flex gap-3 items-center">
+          {product.images[0] && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={product.images[0]} alt={product.title} className="w-14 h-14 rounded-xl object-cover flex-shrink-0 border border-gray-100" />
+          )}
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-gray-900 line-clamp-1">{product.title}</p>
+            <p className="text-xs text-gray-400 mt-0.5">
+              {quantity} item{quantity > 1 ? 's' : ''}
+              {size ? ` · ${size}` : ''}{color ? ` · ${color}` : ''}
+            </p>
+          </div>
+          <div className="text-right flex-shrink-0">
+            <p className="font-bold text-gray-900 font-['JetBrains_Mono',monospace]">{formatINR(totalPaise)}</p>
+            <p className="text-xs text-green-600">FREE delivery</p>
+          </div>
         </div>
       </div>
-    </div>
-  )
+    )
+  }
 
   // ── STEP 1: Login / Phone ──
   if (step === 'login') {
@@ -395,58 +487,93 @@ export default function CheckoutForm({ product, quantity, size, color }: Checkou
           </div>
           <div>
             <h2 className="font-bold text-gray-900">Payment Method</h2>
-            <p className="text-xs text-gray-500">Choose how you want to pay</p>
+            <p className="text-xs text-gray-500">
+              {cartMode ? 'COD available for cart checkout' : 'Choose how you want to pay'}
+            </p>
           </div>
         </div>
 
-        {([
-          { value: 'upi', label: 'UPI / Net Banking', sub: 'PhonePe, GPay, Paytm, BHIM', icon: '⚡' },
-          { value: 'card', label: 'Credit / Debit Card', sub: 'Visa, Mastercard, RuPay', icon: '💳' },
-          { value: 'cod', label: 'Cash on Delivery', sub: 'Pay when your order arrives', icon: '💵' },
-        ] as const).map(({ value, label, sub, icon }) => (
-          <label
-            key={value}
-            className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${
-              form.paymentMethod === value
-                ? 'border-orange-400 bg-orange-50'
-                : 'border-gray-100 hover:border-gray-200 bg-gray-50'
-            }`}
-          >
-            <input
-              type="radio"
-              name="paymentMethod"
-              value={value}
-              checked={form.paymentMethod === value}
-              onChange={() => setForm(f => ({ ...f, paymentMethod: value }))}
-              className="accent-orange-500"
-            />
-            <span className="text-xl flex-shrink-0">{icon}</span>
-            <div className="flex-1">
-              <p className="text-sm font-semibold text-gray-900">{label}</p>
-              <p className="text-xs text-gray-500">{sub}</p>
-            </div>
-            {form.paymentMethod === value && (
+        {cartMode ? (
+          // Cart mode: COD only
+          <>
+            <label className="flex items-center gap-3 p-4 rounded-xl border-2 border-orange-400 bg-orange-50 cursor-pointer">
+              <input type="radio" name="paymentMethod" value="cod" checked readOnly className="accent-orange-500" />
+              <span className="text-xl flex-shrink-0">💵</span>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-gray-900">Cash on Delivery</p>
+                <p className="text-xs text-gray-500">Pay when your order arrives</p>
+              </div>
               <div className="w-5 h-5 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0">
                 <Check className="w-3 h-3 text-white" />
               </div>
-            )}
-          </label>
-        ))}
+            </label>
+            <div className="flex items-start gap-2 bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-700">
+              <span className="text-base flex-shrink-0">ℹ️</span>
+              <span>UPI and card payment are available on individual product pages. Cart checkout uses COD only.</span>
+            </div>
+          </>
+        ) : (
+          // Single product mode: all payment methods
+          <>
+            {([
+              { value: 'upi', label: 'UPI / Net Banking', sub: 'PhonePe, GPay, Paytm, BHIM', icon: '⚡' },
+              { value: 'card', label: 'Credit / Debit Card', sub: 'Visa, Mastercard, RuPay', icon: '💳' },
+              { value: 'cod', label: 'Cash on Delivery', sub: 'Pay when your order arrives', icon: '💵' },
+            ] as const).map(({ value, label, sub, icon }) => (
+              <label
+                key={value}
+                className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                  form.paymentMethod === value
+                    ? 'border-orange-400 bg-orange-50'
+                    : 'border-gray-100 hover:border-gray-200 bg-gray-50'
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value={value}
+                  checked={form.paymentMethod === value}
+                  onChange={() => setForm(f => ({ ...f, paymentMethod: value }))}
+                  className="accent-orange-500"
+                />
+                <span className="text-xl flex-shrink-0">{icon}</span>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-gray-900">{label}</p>
+                  <p className="text-xs text-gray-500">{sub}</p>
+                </div>
+                {form.paymentMethod === value && (
+                  <div className="w-5 h-5 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0">
+                    <Check className="w-3 h-3 text-white" />
+                  </div>
+                )}
+              </label>
+            ))}
 
-        {form.paymentMethod === 'cod' && (
-          <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-700">
-            <span className="text-base flex-shrink-0">ℹ️</span>
-            <span>A refundable ₹49 security deposit may be required for COD orders in high-return areas. It is adjusted on delivery.</span>
-          </div>
+            {form.paymentMethod === 'cod' && (
+              <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-700">
+                <span className="text-base flex-shrink-0">ℹ️</span>
+                <span>A refundable ₹49 security deposit may be required for COD orders in high-return areas. It is adjusted on delivery.</span>
+              </div>
+            )}
+          </>
         )}
       </div>
 
-      {/* Price summary (mobile) */}
+      {/* Price summary */}
       <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-2 text-sm">
-        <div className="flex justify-between text-gray-600">
-          <span>Price × {quantity}</span>
-          <span>{formatINR(product.price_paise * quantity)}</span>
-        </div>
+        {cartMode ? (
+          <>
+            <div className="flex justify-between text-gray-600">
+              <span>Subtotal ({count} items)</span>
+              <span className="font-['JetBrains_Mono',monospace]">{formatINR(cartTotal)}</span>
+            </div>
+          </>
+        ) : (
+          <div className="flex justify-between text-gray-600">
+            <span>Price × {quantity}</span>
+            <span>{formatINR((product?.price_paise ?? 0) * quantity)}</span>
+          </div>
+        )}
         <div className="flex justify-between text-green-600">
           <span>Delivery</span>
           <span className="font-semibold">FREE</span>
@@ -465,6 +592,8 @@ export default function CheckoutForm({ product, quantity, size, color }: Checkou
       >
         {loading ? (
           <><div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> Processing…</>
+        ) : cartMode ? (
+          <>Place {count} Order{count !== 1 ? 's' : ''} · {formatINR(cartTotal)}</>
         ) : form.paymentMethod === 'cod' ? (
           <>Place COD Order · {formatINR(totalPaise)}</>
         ) : (

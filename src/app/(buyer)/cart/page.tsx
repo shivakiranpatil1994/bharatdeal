@@ -26,7 +26,7 @@ export default function CartPage() {
     )
   }
 
-  const checkoutHref = `/checkout?productId=${items[0].productId}&quantity=${items[0].quantity}${items[0].size ? `&size=${items[0].size}` : ''}${items[0].color ? `&color=${items[0].color}` : ''}`
+  const checkoutHref = '/checkout?cart=1'
 
   return (
     <div className="max-w-2xl mx-auto space-y-4">
