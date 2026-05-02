@@ -88,6 +88,9 @@ export interface Database {
           flash_ends_at: string | null
           listing_quality_score: number
           active: boolean
+          approval_status: string
+          approval_note: string | null
+          approval_reviewed_at: string | null
           created_at: string
           updated_at: string
         }
@@ -110,6 +113,9 @@ export interface Database {
           flash_ends_at?: string | null
           listing_quality_score?: number
           active?: boolean
+          approval_status?: string
+          approval_note?: string | null
+          approval_reviewed_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -132,6 +138,9 @@ export interface Database {
           flash_ends_at?: string | null
           listing_quality_score?: number
           active?: boolean
+          approval_status?: string
+          approval_note?: string | null
+          approval_reviewed_at?: string | null
           updated_at?: string
         }
         Relationships: [
