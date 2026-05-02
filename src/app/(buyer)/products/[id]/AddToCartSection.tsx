@@ -4,8 +4,9 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { track } from '@/lib/analytics'
+import { useCart } from '@/context/CartContext'
 import type { Database } from '@/types/database'
-import { ShoppingCart, Minus, Plus, Heart, Share2, ChevronRight, Check, ZoomIn } from 'lucide-react'
+import { ShoppingCart, Minus, Plus, Heart, Share2, ChevronRight, Check, ZoomIn, PackagePlus } from 'lucide-react'
 
 type Product = Database['public']['Tables']['products']['Row']
 
@@ -65,13 +66,31 @@ export function ImageGallery({ images, title }: { images: string[]; title: strin
 
 export function AddToCartSection({ product }: { product: Product }) {
   const router = useRouter()
+  const { addItem } = useCart()
   const [selectedSize, setSelectedSize] = useState<string>(product.sizes[0] ?? '')
   const [selectedColor, setSelectedColor] = useState<string>(product.colors[0] ?? '')
   const [quantity, setQuantity] = useState(1)
   const [wishlisted, setWishlisted] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [addedToCart, setAddedToCart] = useState(false)
 
   const isOutOfStock = product.stock === 0
+
+  function handleAddToCart() {
+    addItem({
+      productId: product.id,
+      title: product.title,
+      image: product.images[0] ?? '',
+      pricePaise: product.price_paise,
+      mrpPaise: product.mrp_paise ?? undefined,
+      quantity,
+      size: selectedSize || undefined,
+      color: selectedColor || undefined,
+    })
+    track('add_to_cart', { productId: product.id }, { productId: product.id })
+    setAddedToCart(true)
+    setTimeout(() => setAddedToCart(false), 2000)
+  }
 
   function handleBuyNow() {
     track('checkout_started', { productId: product.id }, { productId: product.id })
@@ -197,21 +216,36 @@ export function AddToCartSection({ product }: { product: Product }) {
 
       {/* CTA */}
       <div className="space-y-3 pt-1">
-        <button
-          onClick={handleBuyNow}
-          disabled={isOutOfStock}
-          className={cn(
-            'w-full py-3.5 rounded-xl text-base font-bold transition-all flex items-center justify-center gap-2',
-            isOutOfStock
-              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-              : 'bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-200 active:scale-[0.98]'
-          )}
-        >
-          <ShoppingCart className="w-5 h-5" />
-          {isOutOfStock
-            ? 'Out of Stock'
-            : `Buy Now · ₹${Math.round((product.price_paise * quantity) / 100).toLocaleString('en-IN')}`}
-        </button>
+        {isOutOfStock ? (
+          <div className="w-full py-3.5 rounded-xl bg-gray-100 text-gray-400 font-bold text-base flex items-center justify-center gap-2 cursor-not-allowed">
+            <PackagePlus className="w-5 h-5" /> Out of Stock
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-3">
+            {/* Add to Cart */}
+            <button
+              onClick={handleAddToCart}
+              className={cn(
+                'py-3.5 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 border-2',
+                addedToCart
+                  ? 'border-green-500 bg-green-50 text-green-600'
+                  : 'border-orange-500 bg-white text-orange-600 hover:bg-orange-50 active:scale-[0.98]'
+              )}
+            >
+              {addedToCart
+                ? <><Check className="w-4 h-4" /> Added!</>
+                : <><ShoppingCart className="w-4 h-4" /> Add to Cart</>}
+            </button>
+
+            {/* Buy Now */}
+            <button
+              onClick={handleBuyNow}
+              className="py-3.5 rounded-xl text-sm font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+            >
+              Buy Now
+            </button>
+          </div>
+        )}
 
         <p className="text-[11px] text-center text-gray-400">
           COD available · ₹49 deposit for new buyers at high-RTO areas
