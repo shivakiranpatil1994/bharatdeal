@@ -3,8 +3,18 @@ import { createSupabaseAdmin } from '@/lib/supabase'
 
 export const revalidate = 3600 // regenerate hourly
 
+function getAppUrl(): string {
+  try {
+    const raw = process.env.NEXT_PUBLIC_APP_URL ?? ''
+    const clean = raw.replace(/^\[.*?\]\(|\)$/g, '').trim()
+    return new URL(clean.startsWith('http') ? clean : `https://${clean}`).origin
+  } catch {
+    return 'https://bharatdeal.in'
+  }
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://bharatdeal.in'
+  const appUrl = getAppUrl()
   const supabase = createSupabaseAdmin()
 
   const { data: products } = await supabase

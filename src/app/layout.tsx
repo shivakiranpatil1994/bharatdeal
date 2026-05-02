@@ -3,10 +3,22 @@ import { Toaster } from '@/components/ui/sonner'
 import { CartProvider } from '@/context/CartContext'
 import './globals.css'
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://bharatdeal.in'
+function safeAppUrl(): URL {
+  try {
+    const raw = process.env.NEXT_PUBLIC_APP_URL ?? ''
+    // Guard against markdown link format or other invalid values
+    const clean = raw.replace(/^\[.*?\]\(|\)$/g, '').trim()
+    return new URL(clean.startsWith('http') ? clean : `https://${clean}`)
+  } catch {
+    return new URL('https://bharatdeal.in')
+  }
+}
+
+const appUrlObj = safeAppUrl()
+const appUrl = appUrlObj.origin
 
 export const metadata: Metadata = {
-  metadataBase: new URL(appUrl),
+  metadataBase: appUrlObj,
   title: {
     default: 'BharatDeal — Factory Prices, Direct to You',
     template: '%s | BharatDeal',

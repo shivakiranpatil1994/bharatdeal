@@ -13,6 +13,16 @@ import { GroupBuyCounter } from '@/components/buyer/GroupBuyCounter'
 
 export const revalidate = 30
 
+function getAppUrl(): string {
+  try {
+    const raw = process.env.NEXT_PUBLIC_APP_URL ?? ''
+    const clean = raw.replace(/^\[.*?\]\(|\)$/g, '').trim()
+    return new URL(clean.startsWith('http') ? clean : `https://${clean}`).origin
+  } catch {
+    return 'https://bharatdeal.in'
+  }
+}
+
 interface Props { params: Promise<{ id: string }> }
 
 const REVIEW_NAMES = ['Priya S.', 'Rahul M.', 'Ananya K.', 'Suresh B.', 'Meena R.', 'Karan T.', 'Divya P.', 'Amit J.']
@@ -76,7 +86,7 @@ export async function generateMetadata({ params }: Props) {
   ].filter((v): v is string => typeof v === 'string' && v.length > 1)
 
   const image = data.images?.[0] ?? '/og-default.jpg'
-  const url = `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://bharatdeal.in'}/products/${id}`
+  const url = `${getAppUrl()}/products/${id}`
 
   return {
     title,
@@ -159,7 +169,7 @@ export default async function ProductDetailPage({ params }: Props) {
     verified: true,
   }))
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://bharatdeal.in'
+  const appUrl = getAppUrl()
   const productUrl = `${appUrl}/products/${id}`
 
   // JSON-LD: Google Product rich snippet
