@@ -29,11 +29,59 @@ const CITIES = ['Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Hyderabad', 'Pune', 
 export async function generateMetadata({ params }: Props) {
   const { id } = await params
   const supabase = await createSupabaseServer()
-  const { data } = await supabase.from('products').select('title, description').eq('id', id).single()
+  const { data } = await supabase
+    .from('products')
+    .select('title, description, images, price_paise, mrp_paise, category, manufacturers(name, city, state)')
+    .eq('id', id)
+    .single()
+
   if (!data) return { title: 'Product Not Found' }
+
+  const mfr = data.manufacturers as { name: string; city: string; state: string } | null
+  const priceINR = (data.price_paise / 100).toFixed(2)
+  const title = `${data.title} — Buy at ₹${Math.round(data.price_paise / 100)} | BharatDeal`
+  const description = data.description
+    ? `${data.description.slice(0, 140)}. Factory direct price ₹${Math.round(data.price_paise / 100)}. Free delivery, easy returns.`
+    : `Buy ${data.title} at factory direct price ₹${Math.round(data.price_paise / 100)} on BharatDeal. Free delivery, 7-day returns, COD available.`
+  const image = data.images?.[0] ?? 'https://bharatdeal.in/og-default.jpg'
+  const url = `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://bharatdeal.in'}/products/${id}`
+
   return {
-    title: `${data.title} — BharatDeal`,
-    description: data.description ?? 'Buy factory direct on BharatDeal',
+    title,
+    description,
+    keywords: [
+      data.title,
+      data.category,
+      mfr?.name,
+      mfr?.city,
+      'factory direct',
+      'buy online India',
+      'cheap price',
+      'free delivery',
+      'COD available',
+    ].filter(Boolean).join(', '),
+    alternates: { canonical: url },
+    robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
+    openGraph: {
+      type: 'website',
+      url,
+      title,
+      description,
+      siteName: 'BharatDeal',
+      locale: 'en_IN',
+      images: [{ url: image, width: 800, height: 800, alt: data.title }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [image],
+      site: '@bharatdeal',
+    },
+    other: {
+      'product:price:amount': priceINR,
+      'product:price:currency': 'INR',
+    },
   }
 }
 
@@ -89,8 +137,88 @@ export default async function ProductDetailPage({ params }: Props) {
     verified: true,
   }))
 
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://bharatdeal.in'
+  const productUrl = `${appUrl}/products/${id}`
+
+  // JSON-LD: Google Product rich snippet
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.title,
+    description: product.description ?? `${product.title} — factory direct from ${manufacturer?.cluster ?? 'India'}`,
+    image: product.images,
+    sku: product.id,
+    brand: { '@type': 'Brand', name: manufacturer?.name ?? 'BharatDeal Seller' },
+    manufacturer: manufacturer ? {
+      '@type': 'Organization',
+      name: manufacturer.name,
+      address: { '@type': 'PostalAddress', addressLocality: manufacturer.city, addressRegion: manufacturer.state, addressCountry: 'IN' },
+    } : undefined,
+    offers: {
+      '@type': 'Offer',
+      url: productUrl,
+      priceCurrency: 'INR',
+      price: (product.price_paise / 100).toFixed(2),
+      priceValidUntil: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
+      itemCondition: 'https://schema.org/NewCondition',
+      availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      seller: { '@type': 'Organization', name: 'BharatDeal' },
+      hasMerchantReturnPolicy: {
+        '@type': 'MerchantReturnPolicy',
+        returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+        merchantReturnDays: 7,
+        returnMethod: 'https://schema.org/ReturnByMail',
+        returnFees: 'https://schema.org/FreeReturn',
+      },
+      shippingDetails: {
+        '@type': 'OfferShippingDetails',
+        shippingRate: { '@type': 'MonetaryAmount', value: '0', currency: 'INR' },
+        deliveryTime: {
+          '@type': 'ShippingDeliveryTime',
+          handlingTime: { '@type': 'QuantitativeValue', minValue: 1, maxValue: 2, unitCode: 'DAY' },
+          transitTime: { '@type': 'QuantitativeValue', minValue: 3, maxValue: 7, unitCode: 'DAY' },
+        },
+      },
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: avgRating.toFixed(1),
+      reviewCount: reviewCount,
+      bestRating: 5,
+      worstRating: 1,
+    },
+    review: reviews.slice(0, 3).map(r => ({
+      '@type': 'Review',
+      author: { '@type': 'Person', name: r.name },
+      reviewRating: { '@type': 'Rating', ratingValue: r.rating, bestRating: 5 },
+      reviewBody: r.text,
+      datePublished: r.date,
+    })),
+  }
+
   return (
     <div className="bg-gray-50 min-h-screen">
+      {/* JSON-LD: Product rich snippet */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      {/* JSON-LD: Breadcrumb */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: appUrl },
+              { '@type': 'ListItem', position: 2, name: product.category, item: `${appUrl}/?category=${encodeURIComponent(product.category)}` },
+              { '@type': 'ListItem', position: 3, name: product.title, item: productUrl },
+            ],
+          }),
+        }}
+      />
+
       <div className="max-w-7xl mx-auto px-4 py-4">
 
         {/* Breadcrumb */}
