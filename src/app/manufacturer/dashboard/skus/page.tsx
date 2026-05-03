@@ -69,6 +69,8 @@ function SKUsPage() {
   const [skuData, setSkuData] = useState<SKUSummary[]>([])
   const [searchTrends, setSearchTrends] = useState<SearchTrend[]>([])
   const [loading, setLoading] = useState(true)
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
   useEffect(() => {
     if (!mfrLoading && error && process.env.NODE_ENV !== 'development') router.replace('/manufacturer/login')
@@ -224,7 +226,7 @@ function SKUsPage() {
                     </div>
                     {sku.dailyData.length === 0 ? (
                       <div className="h-48 flex items-center justify-center text-gray-400 text-sm">No data for this period</div>
-                    ) : (
+                    ) : mounted ? (
                       <ResponsiveContainer width="100%" height={200}>
                         <BarChart data={sku.dailyData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
                           <CartesianGrid strokeDasharray="3 3" stroke="#F0F0F0" vertical={false} />
@@ -234,7 +236,7 @@ function SKUsPage() {
                           <Bar dataKey="orders" name="orders" fill="#E8450A" radius={[4, 4, 0, 0]} maxBarSize={40} />
                         </BarChart>
                       </ResponsiveContainer>
-                    )}
+                    ) : <div className="h-48" />}
                   </div>
                 ))}
               </div>

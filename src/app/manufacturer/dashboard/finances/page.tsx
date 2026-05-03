@@ -45,6 +45,9 @@ function FinancesPage() {
   const [weeklyData, setWeeklyData] = useState<{ week: string; revenue: number }[]>([])
   const [aiInsight, setAiInsight] = useState('')
   const [loading, setLoading] = useState(true)
+  // Guard recharts (uses ResizeObserver / window) — render only after hydration
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
   useEffect(() => {
     const t = searchParams.get('tab') as TabId | null
@@ -165,7 +168,7 @@ function FinancesPage() {
           )}
 
           {/* Weekly revenue chart */}
-          {weeklyData.length > 0 && (
+          {mounted && weeklyData.length > 0 && (
             <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-5">
               <h2 className="font-semibold text-gray-900 mb-4">Weekly Revenue</h2>
               <ResponsiveContainer width="100%" height={200}>
@@ -188,6 +191,7 @@ function FinancesPage() {
                   <MapPin className="w-4 h-4 text-[#E8450A]" />
                   <h2 className="font-semibold text-gray-900">Revenue by City</h2>
                 </div>
+                {mounted && (
                 <ResponsiveContainer width="100%" height={200}>
                   <PieChart>
                     <Pie data={cityData} dataKey="revenue" nameKey="city" cx="50%" cy="50%" outerRadius={75} innerRadius={40}>
@@ -197,6 +201,7 @@ function FinancesPage() {
                     <Tooltip formatter={(v) => formatINR(Number(v))} />
                   </PieChart>
                 </ResponsiveContainer>
+                )}
               </div>
 
               <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-5">
