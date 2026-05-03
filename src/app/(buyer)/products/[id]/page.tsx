@@ -363,42 +363,22 @@ export default async function ProductDetailPage({ params }: Props) {
 
             {/* Seller info */}
             {manufacturer && (
-              <div className="bg-white rounded-xl border border-gray-100 p-4">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Sold By</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
-                    <span className="text-base font-bold text-orange-600">{manufacturer.name[0]}</span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      <p className="font-semibold text-gray-900 text-sm truncate">{manufacturer.name}</p>
-                      <BadgeCheck className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />
-                    </div>
-                    <div className="flex items-center gap-1.5 mt-0.5 text-xs text-gray-500">
-                      <MapPin className="w-3 h-3" />
-                      <span>{manufacturer.city}, {manufacturer.state}</span>
-                      <span>·</span>
-                      <span>{manufacturer.cluster}</span>
-                    </div>
-                  </div>
-                  <div className="text-right flex-shrink-0">
-                    <div className="flex items-center gap-0.5 justify-end">
-                      {Array.from({ length: 5 }).map((_, i) => <Star key={i} className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />)}
-                    </div>
-                    <p className="text-[10px] text-gray-400 mt-0.5">4.8 Verified</p>
-                  </div>
+              <div className="bg-white rounded-xl border border-gray-100 px-4 py-3 flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
+                  <span className="text-sm font-bold text-orange-600">{manufacturer.name[0]}</span>
                 </div>
-                <div className="mt-3 grid grid-cols-3 gap-2 pt-3 border-t border-gray-100 text-center">
-                  {[
-                    { label: 'Products', value: '12+' },
-                    { label: 'Sales', value: '1.2k+' },
-                    { label: 'Rating', value: '4.8★' },
-                  ].map(({ label, value }) => (
-                    <div key={label}>
-                      <p className="font-semibold text-sm text-gray-900">{value}</p>
-                      <p className="text-[10px] text-gray-400">{label}</p>
-                    </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1">
+                    <p className="text-sm font-semibold text-gray-900 truncate">{manufacturer.name}</p>
+                    <BadgeCheck className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />
+                  </div>
+                  <p className="text-xs text-gray-400">Sold by verified seller</p>
+                </div>
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
                   ))}
+                  <span className="text-xs text-gray-500 ml-1">4.8</span>
                 </div>
               </div>
             )}
