@@ -76,7 +76,7 @@ export default async function SearchPage({
         </div>
       ) : (
         <>
-          <SponsoredSearchResults query={query} placement="search_results" />
+          <SponsoredSearchResults query={query} />
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {products?.map((product) => (
