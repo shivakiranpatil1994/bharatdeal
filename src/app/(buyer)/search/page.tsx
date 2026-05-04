@@ -1,5 +1,6 @@
 import { createSupabaseServer } from '@/lib/supabase'
 import { ProductCard } from '@/components/buyer/ProductCard'
+import { SponsoredSearchResults } from '@/components/buyer/SponsoredSearchResults'
 import type { Database } from '@/types/database'
 import { Search } from 'lucide-react'
 
@@ -74,13 +75,16 @@ export default async function SearchPage({
           <p className="text-xs text-gray-400">Try a different keyword or browse categories</p>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-            {products?.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+        <>
+          <SponsoredSearchResults query={query} placement="search_results" />
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+              {products?.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   )
