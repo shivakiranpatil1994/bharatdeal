@@ -6,9 +6,8 @@ const LoginSchema = z.object({
   password: z.string().min(1),
 })
 
-// Dummy credentials for development — replace with env vars in production
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME ?? 'admin'
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? 'bharatdeal@123'
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME ?? 'shivakiran890@gmail.com'
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? 'Admin@123'
 
 export async function POST(req: NextRequest) {
   try {
