@@ -16,6 +16,16 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
+  const { data: mfr } = await admin
+    .from('manufacturers')
+    .select('id')
+    .eq('login_email', user.email)
+    .single()
+
+  if (!mfr) return NextResponse.json({ error: 'Manufacturer not found' }, { status: 403 })
+
+  const mfrData = mfr as { id: string }
+
   const body = VerifySchema.safeParse(await req.json())
   if (!body.success) return NextResponse.json({ error: 'Invalid input' }, { status: 400 })
 
@@ -30,7 +40,7 @@ export async function POST(req: NextRequest) {
   }
 
   const { error } = await admin.rpc('credit_ad_wallet', {
-    p_manufacturer_id:     user.id,
+    p_manufacturer_id:     mfrData.id,
     p_amount_paise:        amountPaise,
     p_razorpay_payment_id: razorpayPaymentId,
     p_razorpay_order_id:   razorpayOrderId,
@@ -41,17 +51,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Failed to credit wallet' }, { status: 500 })
   }
 
-  const { data: wallet } = await supabase
+  const { data: wallet } = await admin
     .from('ad_wallets')
     .select('balance_paise')
-    .eq('manufacturer_id', user.id)
+    .eq('manufacturer_id', mfrData.id)
     .single()
 
-  // Re-activate campaigns that were budget-exhausted
   await admin
     .from('ad_campaigns')
     .update({ status: 'active' })
-    .eq('manufacturer_id', user.id)
+    .eq('manufacturer_id', mfrData.id)
     .eq('status', 'budget_exhausted')
     .eq('review_status', 'approved')
 

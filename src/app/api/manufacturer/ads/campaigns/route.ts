@@ -25,10 +25,19 @@ export async function GET() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { data, error } = await supabase
+  const admin = createSupabaseAdmin()
+  const { data: mfr } = await admin
+    .from('manufacturers')
+    .select('id')
+    .eq('login_email', user.email)
+    .single()
+
+  if (!mfr) return NextResponse.json({ error: 'Manufacturer not found' }, { status: 403 })
+
+  const { data, error } = await admin
     .from('ad_campaigns')
     .select('*, products ( id, title, images, price_paise, category )')
-    .eq('manufacturer_id', user.id)
+    .eq('manufacturer_id', mfr.id)
     .order('created_at', { ascending: false })
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
@@ -43,6 +52,16 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
+    const { data: mfr } = await admin
+      .from('manufacturers')
+      .select('id, whatsapp_phone, name')
+      .eq('login_email', user.email)
+      .single()
+
+    if (!mfr) return NextResponse.json({ error: 'Manufacturer not found' }, { status: 403 })
+
+    const mfrData = mfr as { id: string; whatsapp_phone: string; name: string }
+
     const body = CreateCampaignSchema.safeParse(await req.json())
     if (!body.success) {
       return NextResponse.json({ error: body.error.flatten() }, { status: 400 })
@@ -53,7 +72,7 @@ export async function POST(req: NextRequest) {
       .from('products')
       .select('id, title, manufacturer_id')
       .eq('id', d.productId)
-      .eq('manufacturer_id', user.id)
+      .eq('manufacturer_id', mfrData.id)
       .eq('active', true)
       .single()
 
@@ -61,10 +80,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Product not found or not yours' }, { status: 403 })
     }
 
-    const { data: wallet } = await supabase
+    const { data: wallet } = await admin
       .from('ad_wallets')
       .select('balance_paise')
-      .eq('manufacturer_id', user.id)
+      .eq('manufacturer_id', mfrData.id)
       .single()
 
     const walletBalance = (wallet as { balance_paise: number } | null)?.balance_paise ?? 0
@@ -88,7 +107,7 @@ export async function POST(req: NextRequest) {
     const { data: campaign, error: insertErr } = await admin
       .from('ad_campaigns')
       .insert({
-        manufacturer_id:    user.id,
+        manufacturer_id:    mfrData.id,
         name:               d.name,
         ad_type:            d.adType,
         product_id:         d.productId,
@@ -115,14 +134,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to create campaign' }, { status: 500 })
     }
 
-    const { data: mfr } = await admin
-      .from('manufacturers')
-      .select('whatsapp_phone, name')
-      .eq('id', user.id)
-      .single()
-
-    const mfrData = mfr as { whatsapp_phone: string; name: string } | null
-    if (mfrData?.whatsapp_phone) {
+    if (mfrData.whatsapp_phone) {
       const msg = canAutoApprove
         ? `🎉 Your campaign "${d.name}" for ${product.title} is now LIVE on BharatDeal!`
         : `⏱ Your campaign "${d.name}" for ${product.title} has been submitted. Our team will review it within 24 hours.`

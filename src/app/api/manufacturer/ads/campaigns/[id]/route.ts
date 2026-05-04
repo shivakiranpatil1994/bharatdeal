@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { createSupabaseServer } from '@/lib/supabase'
+import { createSupabaseServer, createSupabaseAdmin } from '@/lib/supabase'
 
 const UpdateCampaignSchema = z.object({
   status:           z.enum(['active', 'paused']).optional(),
@@ -12,21 +12,32 @@ const UpdateCampaignSchema = z.object({
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const supabase = createSupabaseServer() as any
+  const supabase = await createSupabaseServer()
+  const admin    = createSupabaseAdmin()
+
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const { data: mfr } = await admin
+    .from('manufacturers')
+    .select('id')
+    .eq('login_email', user.email)
+    .single()
+
+  if (!mfr) return NextResponse.json({ error: 'Manufacturer not found' }, { status: 403 })
 
   const body = UpdateCampaignSchema.safeParse(await req.json())
   if (!body.success) {
     return NextResponse.json({ error: body.error.flatten() }, { status: 400 })
   }
 
-  const { data: existing } = await supabase
+  const mfrData = mfr as { id: string }
+
+  const { data: existing } = await admin
     .from('ad_campaigns')
     .select('id, manufacturer_id, review_status')
     .eq('id', id)
-    .eq('manufacturer_id', user.id)
+    .eq('manufacturer_id', mfrData.id)
     .single()
 
   if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
@@ -42,7 +53,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (body.data.maxBidPaise      !== undefined) update.max_bid_paise      = body.data.maxBidPaise
   if (body.data.dailyBudgetPaise !== undefined) update.daily_budget_paise = body.data.dailyBudgetPaise
 
-  const { data, error } = await supabase
+  const { data, error } = await admin
     .from('ad_campaigns')
     .update(update)
     .eq('id', id)
