@@ -115,7 +115,7 @@ export default function NewCampaignPage() {
               value={form.name}
               onChange={e => update('name', e.target.value)}
               placeholder="e.g. Tirupur Cotton T-shirts – Summer"
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#E8450A]"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:outline-none focus:border-[#E8450A]"
             />
           </div>
 
@@ -140,7 +140,7 @@ export default function NewCampaignPage() {
               <select
                 value={form.productId}
                 onChange={e => update('productId', e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#E8450A] bg-white"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:outline-none focus:border-[#E8450A]"
               >
                 <option value="">Select a product…</option>
                 {products.map(p => (
@@ -171,7 +171,7 @@ export default function NewCampaignPage() {
               onChange={e => update('keywords', e.target.value)}
               placeholder="cotton t-shirt, round neck tee, casual wear, tirupur cotton"
               rows={3}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#E8450A] resize-none"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:outline-none focus:border-[#E8450A] resize-none"
             />
           </div>
 
@@ -183,7 +183,7 @@ export default function NewCampaignPage() {
               value={form.categories}
               onChange={e => update('categories', e.target.value)}
               placeholder="Cotton Knitwear, Kids Wear"
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#E8450A]"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:outline-none focus:border-[#E8450A]"
             />
           </div>
 
@@ -229,7 +229,7 @@ export default function NewCampaignPage() {
                 onChange={e => update('maxBidPaise', Math.max(minBid, Math.round(parseFloat(e.target.value) * 100)))}
                 step="0.5"
                 min={minBid / 100}
-                className="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#E8450A]"
+                className="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:outline-none focus:border-[#E8450A]"
               />
             </div>
           </div>
@@ -247,7 +247,7 @@ export default function NewCampaignPage() {
                 onChange={e => update('dailyBudgetPaise', Math.max(10000, Math.round(parseFloat(e.target.value) * 100)))}
                 step="100"
                 min={100}
-                className="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#E8450A]"
+                className="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:outline-none focus:border-[#E8450A]"
               />
             </div>
           </div>
@@ -265,7 +265,7 @@ export default function NewCampaignPage() {
                 onChange={e => update('totalBudgetPaise', Math.max(form.dailyBudgetPaise, Math.round(parseFloat(e.target.value) * 100)))}
                 step="100"
                 min={form.dailyBudgetPaise / 100}
-                className="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#E8450A]"
+                className="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:outline-none focus:border-[#E8450A]"
               />
             </div>
           </div>
@@ -276,7 +276,7 @@ export default function NewCampaignPage() {
               type="date"
               value={form.endDate}
               onChange={e => update('endDate', e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#E8450A]"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:outline-none focus:border-[#E8450A] [color-scheme:light]"
             />
           </div>
 
