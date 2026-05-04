@@ -42,20 +42,20 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-  const update: Record<string, unknown> = { updated_at: new Date().toISOString() }
-
   if (body.data.status !== undefined) {
     if (existing.review_status !== 'approved') {
       return NextResponse.json({ error: 'Can only pause/resume approved campaigns' }, { status: 409 })
     }
-    update.status = body.data.status
   }
-  if (body.data.maxBidPaise      !== undefined) update.max_bid_paise      = body.data.maxBidPaise
-  if (body.data.dailyBudgetPaise !== undefined) update.daily_budget_paise = body.data.dailyBudgetPaise
 
   const { data, error } = await admin
     .from('ad_campaigns')
-    .update(update)
+    .update({
+      ...(body.data.status          !== undefined && { status:            body.data.status }),
+      ...(body.data.maxBidPaise     !== undefined && { max_bid_paise:     body.data.maxBidPaise }),
+      ...(body.data.dailyBudgetPaise !== undefined && { daily_budget_paise: body.data.dailyBudgetPaise }),
+      updated_at: new Date().toISOString(),
+    })
     .eq('id', id)
     .select()
     .single()
