@@ -3,16 +3,15 @@ import { z } from 'zod'
 import Razorpay from 'razorpay'
 import { createSupabaseServer } from '@/lib/supabase'
 
-const razorpay = new Razorpay({
-  key_id:     process.env.RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_KEY_SECRET!,
-})
-
 const TopupSchema = z.object({
   amountPaise: z.number().int().min(20000).max(5_000_000),
 })
 
 export async function POST(req: NextRequest) {
+  const razorpay = new Razorpay({
+    key_id:     process.env.RAZORPAY_KEY_ID!,
+    key_secret: process.env.RAZORPAY_KEY_SECRET!,
+  })
   const supabase = await createSupabaseServer()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
