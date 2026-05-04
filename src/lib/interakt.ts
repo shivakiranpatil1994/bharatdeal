@@ -77,3 +77,17 @@ export async function sendShipmentUpdate(
     trackingUrl,
   ])
 }
+
+export async function sendWhatsAppText(phoneNumber: string, text: string) {
+  await axios.post(
+    BASE_URL,
+    {
+      countryCode: '+91',
+      phoneNumber,
+      callbackData: 'bharatdeal',
+      type: 'Text',
+      data: { message: text },
+    },
+    { headers: headers() }
+  )
+}

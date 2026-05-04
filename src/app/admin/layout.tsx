@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { LayoutDashboard, ShoppingBag, Factory, Users, BarChart3, LogOut, ClipboardList, Package } from 'lucide-react'
+import { LayoutDashboard, ShoppingBag, Factory, Users, BarChart3, LogOut, ClipboardList, Package, Megaphone, Settings2 } from 'lucide-react'
 
 const NAV = [
   { href: '/admin', label: 'Overview', icon: LayoutDashboard },
@@ -9,6 +9,8 @@ const NAV = [
   { href: '/admin/manufacturers', label: 'Manufacturers', icon: Factory },
   { href: '/admin/users', label: 'Users', icon: Users },
   { href: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
+  { href: '/admin/ads', label: 'Ad Review', icon: Megaphone },
+  { href: '/admin/algorithm', label: 'Algorithm', icon: Settings2 },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

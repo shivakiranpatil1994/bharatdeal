@@ -6,7 +6,7 @@ import { useState } from 'react'
 import {
   LayoutDashboard, Package, ShoppingCart, Tag, Wallet,
   TrendingUp, BarChart2, MessageSquare, LogOut, Sparkles,
-  ChevronDown, ChevronRight, Star, Settings, Bell
+  ChevronDown, ChevronRight, Star, Settings, Bell, Megaphone
 } from 'lucide-react'
 
 interface NavItem {
@@ -63,6 +63,14 @@ const NAV: NavItem[] = [
     children: [
       { href: '/manufacturer/dashboard/skus', label: 'Sales Charts' },
       { href: '/manufacturer/dashboard/skus?tab=pincode', label: 'Pincode Demand' },
+    ]
+  },
+  {
+    label: 'Advertise', icon: Megaphone,
+    children: [
+      { href: '/manufacturer/dashboard/ads', label: 'My Campaigns' },
+      { href: '/manufacturer/dashboard/ads/new', label: 'New Campaign' },
+      { href: '/manufacturer/dashboard/ads/wallet', label: 'Ad Wallet' },
     ]
   },
   { href: '/manufacturer/dashboard/ai', label: 'AI Advisor', icon: MessageSquare },

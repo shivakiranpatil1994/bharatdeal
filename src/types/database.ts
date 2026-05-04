@@ -856,6 +856,160 @@ export interface Database {
         }
         Relationships: []
       }
+      // ── Ads system tables (from migration 006_ads.sql) ─────────────
+      ad_wallets: {
+        Row: { manufacturer_id: string; balance_paise: number; total_topped_up: number; total_spent: number; updated_at: string }
+        Insert: { manufacturer_id: string; balance_paise?: number; total_topped_up?: number; total_spent?: number; updated_at?: string }
+        Update: { manufacturer_id?: string; balance_paise?: number; total_topped_up?: number; total_spent?: number; updated_at?: string }
+        Relationships: []
+      }
+      ad_campaigns: {
+        Row: {
+          id: string; manufacturer_id: string; name: string; ad_type: string; product_id: string
+          keywords: string[]; categories: string[]; flash_slot_date: string | null; flash_slot_time: string | null; flash_fee_paise: number | null
+          max_bid_paise: number; daily_budget_paise: number; total_budget_paise: number; spent_today_paise: number; total_spent_paise: number
+          start_date: string; end_date: string | null; review_status: string; reviewed_at: string | null; review_note: string | null
+          reject_reason: string | null; auto_flags: string[]; auto_approved: boolean; status: string; quality_score: number
+          total_impressions: number; total_clicks: number; total_conversions: number; total_revenue_paise: number
+          created_at: string; updated_at: string
+        }
+        Insert: {
+          id?: string; manufacturer_id: string; name: string; ad_type: string; product_id: string
+          keywords?: string[]; categories?: string[]; flash_slot_date?: string | null; flash_slot_time?: string | null; flash_fee_paise?: number | null
+          max_bid_paise: number; daily_budget_paise: number; total_budget_paise: number; spent_today_paise?: number; total_spent_paise?: number
+          start_date?: string; end_date?: string | null; review_status?: string; reviewed_at?: string | null; review_note?: string | null
+          reject_reason?: string | null; auto_flags?: string[]; auto_approved?: boolean; status?: string; quality_score?: number
+          total_impressions?: number; total_clicks?: number; total_conversions?: number; total_revenue_paise?: number
+          created_at?: string; updated_at?: string
+        }
+        Update: {
+          id?: string; manufacturer_id?: string; name?: string; ad_type?: string; product_id?: string
+          keywords?: string[]; categories?: string[]; flash_slot_date?: string | null; flash_slot_time?: string | null; flash_fee_paise?: number | null
+          max_bid_paise?: number; daily_budget_paise?: number; total_budget_paise?: number; spent_today_paise?: number; total_spent_paise?: number
+          start_date?: string; end_date?: string | null; review_status?: string; reviewed_at?: string | null; review_note?: string | null
+          reject_reason?: string | null; auto_flags?: string[]; auto_approved?: boolean; status?: string; quality_score?: number
+          total_impressions?: number; total_clicks?: number; total_conversions?: number; total_revenue_paise?: number
+          created_at?: string; updated_at?: string
+        }
+        Relationships: []
+      }
+      ad_impressions: {
+        Row: {
+          id: string; campaign_id: string; product_id: string; query: string | null; placement: string; position: number
+          ad_score: number | null; actual_cpc_paise: number | null; quality_score: number | null; relevance_score: number | null; pctr: number | null
+          buyer_pincode: string | null; buyer_session: string | null; buyer_ip_hash: string | null; created_at: string
+        }
+        Insert: {
+          id?: string; campaign_id: string; product_id: string; query?: string | null; placement: string; position?: number
+          ad_score?: number | null; actual_cpc_paise?: number | null; quality_score?: number | null; relevance_score?: number | null; pctr?: number | null
+          buyer_pincode?: string | null; buyer_session?: string | null; buyer_ip_hash?: string | null; created_at?: string
+        }
+        Update: {
+          id?: string; campaign_id?: string; product_id?: string; query?: string | null; placement?: string; position?: number
+          ad_score?: number | null; actual_cpc_paise?: number | null; quality_score?: number | null; relevance_score?: number | null; pctr?: number | null
+          buyer_pincode?: string | null; buyer_session?: string | null; buyer_ip_hash?: string | null; created_at?: string
+        }
+        Relationships: []
+      }
+      ad_clicks: {
+        Row: {
+          id: string; impression_id: string; campaign_id: string; product_id: string; manufacturer_id: string
+          cpc_charged_paise: number; buyer_pincode: string | null; buyer_ip_hash: string | null; is_fraud: boolean; created_at: string
+        }
+        Insert: {
+          id?: string; impression_id: string; campaign_id: string; product_id: string; manufacturer_id: string
+          cpc_charged_paise: number; buyer_pincode?: string | null; buyer_ip_hash?: string | null; is_fraud?: boolean; created_at?: string
+        }
+        Update: {
+          id?: string; impression_id?: string; campaign_id?: string; product_id?: string; manufacturer_id?: string
+          cpc_charged_paise?: number; buyer_pincode?: string | null; buyer_ip_hash?: string | null; is_fraud?: boolean; created_at?: string
+        }
+        Relationships: []
+      }
+      ad_conversions: {
+        Row: { id: string; click_id: string; campaign_id: string; order_id: string; revenue_paise: number; attributed_at: string }
+        Insert: { id?: string; click_id: string; campaign_id: string; order_id: string; revenue_paise: number; attributed_at?: string }
+        Update: { id?: string; click_id?: string; campaign_id?: string; order_id?: string; revenue_paise?: number; attributed_at?: string }
+        Relationships: []
+      }
+      ad_quality_scores: {
+        Row: {
+          product_id: string; quality_score: number; return_rate_score: number | null; seller_score_norm: number | null
+          listing_quality_score: number | null; review_rating_norm: number | null; fulfillment_speed_score: number | null
+          override_score: number | null; override_reason: string | null; override_type: string | null
+          override_expires_at: string | null; override_set_at: string | null; computed_at: string
+        }
+        Insert: {
+          product_id: string; quality_score?: number; return_rate_score?: number | null; seller_score_norm?: number | null
+          listing_quality_score?: number | null; review_rating_norm?: number | null; fulfillment_speed_score?: number | null
+          override_score?: number | null; override_reason?: string | null; override_type?: string | null
+          override_expires_at?: string | null; override_set_at?: string | null; computed_at?: string
+        }
+        Update: {
+          product_id?: string; quality_score?: number; return_rate_score?: number | null; seller_score_norm?: number | null
+          listing_quality_score?: number | null; review_rating_norm?: number | null; fulfillment_speed_score?: number | null
+          override_score?: number | null; override_reason?: string | null; override_type?: string | null
+          override_expires_at?: string | null; override_set_at?: string | null; computed_at?: string
+        }
+        Relationships: []
+      }
+      ad_wallet_transactions: {
+        Row: {
+          id: string; manufacturer_id: string; type: string; amount_paise: number
+          campaign_id: string | null; click_id: string | null; description: string | null
+          razorpay_payment_id: string | null; razorpay_order_id: string | null; buyer_pincode: string | null; created_at: string
+        }
+        Insert: {
+          id?: string; manufacturer_id: string; type: string; amount_paise: number
+          campaign_id?: string | null; click_id?: string | null; description?: string | null
+          razorpay_payment_id?: string | null; razorpay_order_id?: string | null; buyer_pincode?: string | null; created_at?: string
+        }
+        Update: {
+          id?: string; manufacturer_id?: string; type?: string; amount_paise?: number
+          campaign_id?: string | null; click_id?: string | null; description?: string | null
+          razorpay_payment_id?: string | null; razorpay_order_id?: string | null; buyer_pincode?: string | null; created_at?: string
+        }
+        Relationships: []
+      }
+      ad_review_log: {
+        Row: { id: string; campaign_id: string; action: string; reason: string | null; note: string | null; reviewed_at: string }
+        Insert: { id?: string; campaign_id: string; action: string; reason?: string | null; note?: string | null; reviewed_at?: string }
+        Update: { id?: string; campaign_id?: string; action?: string; reason?: string | null; note?: string | null; reviewed_at?: string }
+        Relationships: []
+      }
+      algorithm_config: {
+        Row: {
+          id: string; weight_bid: number; weight_quality: number; weight_relevance: number; weight_pctr: number
+          qs_weight_return_rate: number; qs_weight_seller_score: number; qs_weight_listing: number; qs_weight_rating: number; qs_weight_fulfillment: number
+          min_quality_score: number; min_relevance_score: number; min_bid_search_paise: number; min_bid_card_paise: number; min_bid_banner_cpm: number
+          max_rto_pct: number; auto_approve_min_qs: number; auto_approve_max_rto: number; attribution_days: number
+          fraud_cooldown_hours: number; max_clicks_per_ip_day: number; is_active: boolean; change_reason: string | null
+          changed_by: string; effective_at: string; revert_at: string | null; created_at: string
+        }
+        Insert: {
+          id?: string; weight_bid?: number; weight_quality?: number; weight_relevance?: number; weight_pctr?: number
+          qs_weight_return_rate?: number; qs_weight_seller_score?: number; qs_weight_listing?: number; qs_weight_rating?: number; qs_weight_fulfillment?: number
+          min_quality_score?: number; min_relevance_score?: number; min_bid_search_paise?: number; min_bid_card_paise?: number; min_bid_banner_cpm?: number
+          max_rto_pct?: number; auto_approve_min_qs?: number; auto_approve_max_rto?: number; attribution_days?: number
+          fraud_cooldown_hours?: number; max_clicks_per_ip_day?: number; is_active?: boolean; change_reason?: string | null
+          changed_by?: string; effective_at?: string; revert_at?: string | null; created_at?: string
+        }
+        Update: {
+          id?: string; weight_bid?: number; weight_quality?: number; weight_relevance?: number; weight_pctr?: number
+          qs_weight_return_rate?: number; qs_weight_seller_score?: number; qs_weight_listing?: number; qs_weight_rating?: number; qs_weight_fulfillment?: number
+          min_quality_score?: number; min_relevance_score?: number; min_bid_search_paise?: number; min_bid_card_paise?: number; min_bid_banner_cpm?: number
+          max_rto_pct?: number; auto_approve_min_qs?: number; auto_approve_max_rto?: number; attribution_days?: number
+          fraud_cooldown_hours?: number; max_clicks_per_ip_day?: number; is_active?: boolean; change_reason?: string | null
+          changed_by?: string; effective_at?: string; revert_at?: string | null; created_at?: string
+        }
+        Relationships: []
+      }
+      algorithm_change_log: {
+        Row: { id: string; config_id: string | null; field_name: string; old_value: string | null; new_value: string | null; change_reason: string | null; changed_by: string | null; changed_at: string }
+        Insert: { id?: string; config_id?: string | null; field_name: string; old_value?: string | null; new_value?: string | null; change_reason?: string | null; changed_by?: string | null; changed_at?: string }
+        Update: { id?: string; config_id?: string | null; field_name?: string; old_value?: string | null; new_value?: string | null; change_reason?: string | null; changed_by?: string | null; changed_at?: string }
+        Relationships: []
+      }
     }
     Views: {
       manufacturer_today_stats: {
@@ -875,8 +1029,372 @@ export interface Database {
         Args: Record<PropertyKey, never>
         Returns: void
       }
+      reset_daily_ad_spend: {
+        Args: Record<PropertyKey, never>
+        Returns: void
+      }
+      credit_ad_wallet: {
+        Args: {
+          p_manufacturer_id: string
+          p_amount_paise: number
+          p_razorpay_payment_id: string
+          p_razorpay_order_id: string
+        }
+        Returns: void
+      }
+      deduct_ad_wallet: {
+        Args: {
+          p_manufacturer_id: string
+          p_amount_paise: number
+          p_campaign_id: string
+          p_click_id: string
+          p_buyer_pincode: string | null
+        }
+        Returns: boolean
+      }
     }
     Enums: Record<string, never>
     CompositeTypes: Record<string, never>
+  }
+}
+
+// ── Ads system tables (added after migration 006_ads.sql) ──────────────────
+// These extend the Database type with new tables not yet in generated types.
+// Run `supabase gen types` after applying 006_ads.sql to replace this block.
+
+export interface AdsDatabase {
+  ad_wallets: {
+    Row: {
+      manufacturer_id: string
+      balance_paise: number
+      total_topped_up: number
+      total_spent: number
+      updated_at: string
+    }
+    Insert: {
+      manufacturer_id: string
+      balance_paise?: number
+      total_topped_up?: number
+      total_spent?: number
+      updated_at?: string
+    }
+    Update: Partial<AdsDatabase['ad_wallets']['Insert']>
+  }
+  ad_campaigns: {
+    Row: {
+      id: string
+      manufacturer_id: string
+      name: string
+      ad_type: string
+      product_id: string
+      keywords: string[]
+      categories: string[]
+      flash_slot_date: string | null
+      flash_slot_time: string | null
+      flash_fee_paise: number | null
+      max_bid_paise: number
+      daily_budget_paise: number
+      total_budget_paise: number
+      spent_today_paise: number
+      total_spent_paise: number
+      start_date: string
+      end_date: string | null
+      review_status: string
+      reviewed_at: string | null
+      review_note: string | null
+      reject_reason: string | null
+      auto_flags: string[]
+      auto_approved: boolean
+      status: string
+      quality_score: number
+      total_impressions: number
+      total_clicks: number
+      total_conversions: number
+      total_revenue_paise: number
+      created_at: string
+      updated_at: string
+    }
+    Insert: {
+      id?: string
+      manufacturer_id: string
+      name: string
+      ad_type: string
+      product_id: string
+      keywords?: string[]
+      categories?: string[]
+      flash_slot_date?: string | null
+      flash_slot_time?: string | null
+      flash_fee_paise?: number | null
+      max_bid_paise: number
+      daily_budget_paise: number
+      total_budget_paise: number
+      spent_today_paise?: number
+      total_spent_paise?: number
+      start_date?: string
+      end_date?: string | null
+      review_status?: string
+      reviewed_at?: string | null
+      review_note?: string | null
+      reject_reason?: string | null
+      auto_flags?: string[]
+      auto_approved?: boolean
+      status?: string
+      quality_score?: number
+      total_impressions?: number
+      total_clicks?: number
+      total_conversions?: number
+      total_revenue_paise?: number
+      created_at?: string
+      updated_at?: string
+    }
+    Update: Partial<AdsDatabase['ad_campaigns']['Insert']>
+  }
+  ad_impressions: {
+    Row: {
+      id: string
+      campaign_id: string
+      product_id: string
+      query: string | null
+      placement: string
+      position: number
+      ad_score: number | null
+      actual_cpc_paise: number | null
+      quality_score: number | null
+      relevance_score: number | null
+      pctr: number | null
+      buyer_pincode: string | null
+      buyer_session: string | null
+      buyer_ip_hash: string | null
+      created_at: string
+    }
+    Insert: {
+      id?: string
+      campaign_id: string
+      product_id: string
+      query?: string | null
+      placement: string
+      position?: number
+      ad_score?: number | null
+      actual_cpc_paise?: number | null
+      quality_score?: number | null
+      relevance_score?: number | null
+      pctr?: number | null
+      buyer_pincode?: string | null
+      buyer_session?: string | null
+      buyer_ip_hash?: string | null
+      created_at?: string
+    }
+    Update: Partial<AdsDatabase['ad_impressions']['Insert']>
+  }
+  ad_clicks: {
+    Row: {
+      id: string
+      impression_id: string
+      campaign_id: string
+      product_id: string
+      manufacturer_id: string
+      cpc_charged_paise: number
+      buyer_pincode: string | null
+      buyer_ip_hash: string | null
+      is_fraud: boolean
+      created_at: string
+    }
+    Insert: {
+      id?: string
+      impression_id: string
+      campaign_id: string
+      product_id: string
+      manufacturer_id: string
+      cpc_charged_paise: number
+      buyer_pincode?: string | null
+      buyer_ip_hash?: string | null
+      is_fraud?: boolean
+      created_at?: string
+    }
+    Update: Partial<AdsDatabase['ad_clicks']['Insert']>
+  }
+  ad_conversions: {
+    Row: {
+      id: string
+      click_id: string
+      campaign_id: string
+      order_id: string
+      revenue_paise: number
+      attributed_at: string
+    }
+    Insert: {
+      id?: string
+      click_id: string
+      campaign_id: string
+      order_id: string
+      revenue_paise: number
+      attributed_at?: string
+    }
+    Update: Partial<AdsDatabase['ad_conversions']['Insert']>
+  }
+  ad_quality_scores: {
+    Row: {
+      product_id: string
+      quality_score: number
+      return_rate_score: number | null
+      seller_score_norm: number | null
+      listing_quality_score: number | null
+      review_rating_norm: number | null
+      fulfillment_speed_score: number | null
+      override_score: number | null
+      override_reason: string | null
+      override_type: string | null
+      override_expires_at: string | null
+      override_set_at: string | null
+      computed_at: string
+    }
+    Insert: {
+      product_id: string
+      quality_score?: number
+      return_rate_score?: number | null
+      seller_score_norm?: number | null
+      listing_quality_score?: number | null
+      review_rating_norm?: number | null
+      fulfillment_speed_score?: number | null
+      override_score?: number | null
+      override_reason?: string | null
+      override_type?: string | null
+      override_expires_at?: string | null
+      override_set_at?: string | null
+      computed_at?: string
+    }
+    Update: Partial<AdsDatabase['ad_quality_scores']['Insert']>
+  }
+  ad_wallet_transactions: {
+    Row: {
+      id: string
+      manufacturer_id: string
+      type: string
+      amount_paise: number
+      campaign_id: string | null
+      click_id: string | null
+      description: string | null
+      razorpay_payment_id: string | null
+      razorpay_order_id: string | null
+      buyer_pincode: string | null
+      created_at: string
+    }
+    Insert: {
+      id?: string
+      manufacturer_id: string
+      type: string
+      amount_paise: number
+      campaign_id?: string | null
+      click_id?: string | null
+      description?: string | null
+      razorpay_payment_id?: string | null
+      razorpay_order_id?: string | null
+      buyer_pincode?: string | null
+      created_at?: string
+    }
+    Update: Partial<AdsDatabase['ad_wallet_transactions']['Insert']>
+  }
+  ad_review_log: {
+    Row: {
+      id: string
+      campaign_id: string
+      action: string
+      reason: string | null
+      note: string | null
+      reviewed_at: string
+    }
+    Insert: {
+      id?: string
+      campaign_id: string
+      action: string
+      reason?: string | null
+      note?: string | null
+      reviewed_at?: string
+    }
+    Update: Partial<AdsDatabase['ad_review_log']['Insert']>
+  }
+  algorithm_config: {
+    Row: {
+      id: string
+      weight_bid: number
+      weight_quality: number
+      weight_relevance: number
+      weight_pctr: number
+      qs_weight_return_rate: number
+      qs_weight_seller_score: number
+      qs_weight_listing: number
+      qs_weight_rating: number
+      qs_weight_fulfillment: number
+      min_quality_score: number
+      min_relevance_score: number
+      min_bid_search_paise: number
+      min_bid_card_paise: number
+      min_bid_banner_cpm: number
+      max_rto_pct: number
+      auto_approve_min_qs: number
+      auto_approve_max_rto: number
+      attribution_days: number
+      fraud_cooldown_hours: number
+      max_clicks_per_ip_day: number
+      is_active: boolean
+      change_reason: string | null
+      changed_by: string
+      effective_at: string
+      revert_at: string | null
+      created_at: string
+    }
+    Insert: {
+      id?: string
+      weight_bid?: number
+      weight_quality?: number
+      weight_relevance?: number
+      weight_pctr?: number
+      qs_weight_return_rate?: number
+      qs_weight_seller_score?: number
+      qs_weight_listing?: number
+      qs_weight_rating?: number
+      qs_weight_fulfillment?: number
+      min_quality_score?: number
+      min_relevance_score?: number
+      min_bid_search_paise?: number
+      min_bid_card_paise?: number
+      min_bid_banner_cpm?: number
+      max_rto_pct?: number
+      auto_approve_min_qs?: number
+      auto_approve_max_rto?: number
+      attribution_days?: number
+      fraud_cooldown_hours?: number
+      max_clicks_per_ip_day?: number
+      is_active?: boolean
+      change_reason?: string | null
+      changed_by?: string
+      effective_at?: string
+      revert_at?: string | null
+      created_at?: string
+    }
+    Update: Partial<AdsDatabase['algorithm_config']['Insert']>
+  }
+  algorithm_change_log: {
+    Row: {
+      id: string
+      config_id: string | null
+      field_name: string
+      old_value: string | null
+      new_value: string | null
+      change_reason: string | null
+      changed_by: string | null
+      changed_at: string
+    }
+    Insert: {
+      id?: string
+      config_id?: string | null
+      field_name: string
+      old_value?: string | null
+      new_value?: string | null
+      change_reason?: string | null
+      changed_by?: string | null
+      changed_at?: string
+    }
+    Update: Partial<AdsDatabase['algorithm_change_log']['Insert']>
   }
 }
