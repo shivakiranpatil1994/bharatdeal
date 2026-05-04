@@ -53,11 +53,11 @@ export const AD_TYPE_LABELS: Record<string, string> = {
 }
 
 export const AD_TYPE_COLORS: Record<string, string> = {
-  sponsored_search: 'bg-purple-100 text-purple-800',
-  product_card:     'bg-blue-100 text-blue-800',
-  flash_deal:       'bg-orange-100 text-orange-800',
-  banner:           'bg-teal-100 text-teal-800',
-  zero_result:      'bg-green-100 text-green-800',
+  sponsored_search: 'bg-purple-500/15 text-purple-300 border border-purple-500/25',
+  product_card:     'bg-blue-500/15 text-blue-300 border border-blue-500/25',
+  flash_deal:       'bg-orange-500/15 text-orange-300 border border-orange-500/25',
+  banner:           'bg-teal-500/15 text-teal-300 border border-teal-500/25',
+  zero_result:      'bg-emerald-500/15 text-emerald-300 border border-emerald-500/25',
 }
 
 export const CAMPAIGN_STATUS_LABELS: Record<string, string> = {
@@ -70,12 +70,12 @@ export const CAMPAIGN_STATUS_LABELS: Record<string, string> = {
 }
 
 export const CAMPAIGN_STATUS_COLORS: Record<string, string> = {
-  pending_review:   'bg-amber-100 text-amber-800',
-  active:           'bg-emerald-100 text-emerald-800',
-  paused:           'bg-gray-100 text-gray-700',
-  ended:            'bg-gray-100 text-gray-600',
-  budget_exhausted: 'bg-orange-100 text-orange-800',
-  rejected:         'bg-red-100 text-red-800',
+  pending_review:   'bg-amber-500/15 text-amber-300 border border-amber-500/25',
+  active:           'bg-emerald-500/15 text-emerald-300 border border-emerald-500/25',
+  paused:           'bg-zinc-500/15 text-zinc-400 border border-zinc-500/25',
+  ended:            'bg-zinc-500/10 text-zinc-500 border border-zinc-500/20',
+  budget_exhausted: 'bg-orange-500/15 text-orange-300 border border-orange-500/25',
+  rejected:         'bg-red-500/15 text-red-300 border border-red-500/25',
 }
 
 export const REJECT_REASONS = [

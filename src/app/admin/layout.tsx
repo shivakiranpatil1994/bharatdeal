@@ -1,19 +1,32 @@
+'use client'
+
 import Link from 'next/link'
-import { LayoutDashboard, ShoppingBag, Factory, Users, BarChart3, LogOut, ClipboardList, Package, Megaphone, Settings2 } from 'lucide-react'
+import { usePathname } from 'next/navigation'
+import {
+  LayoutDashboard, ShoppingBag, Factory, Users, BarChart3,
+  LogOut, ClipboardList, Package, Megaphone, Settings2,
+} from 'lucide-react'
 
 const NAV = [
-  { href: '/admin', label: 'Overview', icon: LayoutDashboard },
-  { href: '/admin/applications', label: 'Applications', icon: ClipboardList },
-  { href: '/admin/products', label: 'Products', icon: Package },
-  { href: '/admin/orders', label: 'Orders', icon: ShoppingBag },
-  { href: '/admin/manufacturers', label: 'Manufacturers', icon: Factory },
-  { href: '/admin/users', label: 'Users', icon: Users },
-  { href: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
-  { href: '/admin/ads', label: 'Ad Review', icon: Megaphone },
-  { href: '/admin/algorithm', label: 'Algorithm', icon: Settings2 },
+  { href: '/admin',                label: 'Overview',      icon: LayoutDashboard, exact: true },
+  { href: '/admin/applications',   label: 'Applications',  icon: ClipboardList },
+  { href: '/admin/products',       label: 'Products',      icon: Package },
+  { href: '/admin/orders',         label: 'Orders',        icon: ShoppingBag },
+  { href: '/admin/manufacturers',  label: 'Manufacturers', icon: Factory },
+  { href: '/admin/users',          label: 'Users',         icon: Users },
+  { href: '/admin/analytics',      label: 'Analytics',     icon: BarChart3 },
+  { href: '/admin/ads',            label: 'Ad Review',     icon: Megaphone },
+  { href: '/admin/algorithm',      label: 'Algorithm',     icon: Settings2 },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+
+  function isActive(href: string, exact?: boolean) {
+    if (exact) return pathname === href
+    return pathname === href || pathname.startsWith(href + '/')
+  }
+
   return (
     <div className="min-h-screen bg-[var(--bg-base)] flex">
       {/* Sidebar */}
@@ -29,17 +42,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 py-4 px-3 flex flex-col gap-1">
-          {NAV.map(({ href, label, icon: Icon }) => (
-            <Link
-              key={href}
-              href={href}
-              className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] transition-colors duration-200"
-            >
-              <Icon className="w-4 h-4 flex-shrink-0" />
-              {label}
-            </Link>
-          ))}
+        <nav className="flex-1 py-4 px-3 flex flex-col gap-0.5">
+          {NAV.map(({ href, label, icon: Icon, exact }) => {
+            const active = isActive(href, exact)
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors duration-150 ${
+                  active
+                    ? 'bg-[var(--brand-primary)]/10 text-[var(--brand-primary)] font-medium'
+                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)]'
+                }`}
+              >
+                <Icon className="w-4 h-4 flex-shrink-0" />
+                {label}
+              </Link>
+            )
+          })}
         </nav>
 
         {/* Logout */}
@@ -47,7 +67,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <form action="/api/admin/logout" method="POST">
             <button
               type="submit"
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-[var(--text-tertiary)] hover:text-[var(--danger)] hover:bg-red-500/5 transition-colors duration-200"
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-[var(--text-tertiary)] hover:text-red-400 hover:bg-red-500/5 transition-colors duration-150"
             >
               <LogOut className="w-4 h-4" />
               Sign out
@@ -68,16 +88,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Mobile bottom nav */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--bg-surface)] border-t border-[var(--bg-border)] flex">
-        {NAV.map(({ href, label, icon: Icon }) => (
-          <Link
-            key={href}
-            href={href}
-            className="flex-1 flex flex-col items-center gap-1 py-2 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors duration-200"
-          >
-            <Icon className="w-4 h-4" />
-            <span className="text-[9px]">{label}</span>
-          </Link>
-        ))}
+        {NAV.slice(0, 5).map(({ href, label, icon: Icon, exact }) => {
+          const active = isActive(href, exact)
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={`flex-1 flex flex-col items-center gap-1 py-2 transition-colors duration-150 ${
+                active ? 'text-[var(--brand-primary)]' : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)]'
+              }`}
+            >
+              <Icon className="w-4 h-4" />
+              <span className="text-[9px]">{label}</span>
+            </Link>
+          )
+        })}
       </nav>
 
       {/* Main content */}
