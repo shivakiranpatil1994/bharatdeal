@@ -6,7 +6,7 @@ import { ArrowLeft, Pause, Play, TrendingUp } from 'lucide-react'
 import {
   formatINRFromPaise, formatCTR, formatROAS,
   CAMPAIGN_STATUS_LABELS, CAMPAIGN_STATUS_COLORS,
-  AD_TYPE_LABELS, REJECT_REASONS,
+  AD_TYPE_LABELS,
 } from '@/lib/adHelpers'
 
 interface Campaign {
@@ -215,7 +215,11 @@ export default function CampaignDetailPage({ params }: { params: { id: string } 
           <div className="flex items-center gap-3">
             {campaign.products.images?.[0] && (
               <img
-                src={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/w_80,h_80,c_fill,f_auto/${campaign.products.images[0]}`}
+                src={
+                  campaign.products.images[0].startsWith('http')
+                    ? campaign.products.images[0]
+                    : `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/w_80,h_80,c_fill,f_auto/${campaign.products.images[0]}`
+                }
                 alt={campaign.products.title}
                 className="w-16 h-16 rounded-lg object-cover border border-gray-200"
               />

@@ -43,10 +43,13 @@ export function SponsoredProductCard({ product, buyerPincode }: Props) {
     router.push(`/products/${product.id}`)
   }
 
+  const rawImage = product.images?.[0] ?? ''
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
-  const imageUrl = product.images?.[0] && cloudName
-    ? `https://res.cloudinary.com/${cloudName}/image/upload/w_400,h_400,c_fill,f_auto,q_auto/${product.images[0]}`
-    : '/placeholder-product.jpg'
+  const imageUrl = rawImage.startsWith('http')
+    ? rawImage
+    : rawImage && cloudName
+      ? `https://res.cloudinary.com/${cloudName}/image/upload/w_400,h_400,c_fill,f_auto,q_auto/${rawImage}`
+      : '/placeholder-product.jpg'
 
   const discountPct = product.mrp_paise && product.mrp_paise > product.price_paise
     ? Math.round((1 - product.price_paise / product.mrp_paise) * 100)

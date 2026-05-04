@@ -12,6 +12,7 @@ export function useAdWalletBalance(manufacturerId: string): WalletState {
   const [state, setState] = useState<WalletState>({ balancePaise: 0, isLoading: true })
 
   useEffect(() => {
+    if (!manufacturerId) { setState({ balancePaise: 0, isLoading: false }); return }
     const supabase = createSupabaseBrowser()
 
     supabase

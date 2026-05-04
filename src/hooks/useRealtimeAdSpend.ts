@@ -17,6 +17,7 @@ export function useRealtimeAdSpend(manufacturerId: string): AdSpendStats {
   })
 
   const fetchInitial = useCallback(async () => {
+    if (!manufacturerId) { setStats({ spendTodayPaise: 0, clicksToday: 0, isLoading: false }); return }
     const supabase = createSupabaseBrowser()
     const todayStr = new Date().toISOString().split('T')[0]
     const todayISO = new Date(todayStr).toISOString()
