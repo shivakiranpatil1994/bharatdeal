@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   const supabase = await createSupabaseServer()
   const admin    = createSupabaseAdmin()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { data: mfr } = await admin
     .from('manufacturers')
