@@ -4,19 +4,20 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard, ShoppingBag, Factory, Users, BarChart3,
-  LogOut, ClipboardList, Package, Megaphone, Settings2,
+  LogOut, ClipboardList, Package, Megaphone, Settings2, TrendingUp,
 } from 'lucide-react'
 
 const NAV = [
-  { href: '/admin',                label: 'Overview',      icon: LayoutDashboard, exact: true },
-  { href: '/admin/applications',   label: 'Applications',  icon: ClipboardList },
-  { href: '/admin/products',       label: 'Products',      icon: Package },
-  { href: '/admin/orders',         label: 'Orders',        icon: ShoppingBag },
-  { href: '/admin/manufacturers',  label: 'Manufacturers', icon: Factory },
-  { href: '/admin/users',          label: 'Users',         icon: Users },
-  { href: '/admin/analytics',      label: 'Analytics',     icon: BarChart3 },
-  { href: '/admin/ads',            label: 'Ad Review',     icon: Megaphone },
-  { href: '/admin/algorithm',      label: 'Algorithm',     icon: Settings2 },
+  { href: '/admin',                          label: 'Overview',      icon: LayoutDashboard, exact: true },
+  { href: '/admin/applications',             label: 'Applications',  icon: ClipboardList },
+  { href: '/admin/products',                 label: 'Products',      icon: Package },
+  { href: '/admin/orders',                   label: 'Orders',        icon: ShoppingBag },
+  { href: '/admin/manufacturers',            label: 'Manufacturers', icon: Factory },
+  { href: '/admin/users',                    label: 'Users',         icon: Users },
+  { href: '/admin/analytics',               label: 'Analytics',     icon: BarChart3, exact: true },
+  { href: '/admin/analytics/investor',       label: 'Investor View', icon: TrendingUp },
+  { href: '/admin/ads',                      label: 'Ad Review',     icon: Megaphone },
+  { href: '/admin/algorithm',                label: 'Algorithm',     icon: Settings2 },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
