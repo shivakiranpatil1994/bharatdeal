@@ -85,7 +85,7 @@ function NavGroup({ item, pathname }: { item: NavItem; pathname: string }) {
     return (
       <Link href={item.href}
         className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
-          isActive ? 'bg-[#E8450A] text-white shadow-sm shadow-orange-200' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+          isActive ? 'bg-[#F15A2B] text-white shadow-sm shadow-orange-200' : 'text-gray-600 hover:text-gray-900 hover:bg-[#FEF3EE] hover:text-[#F15A2B]'
         }`}>
         <item.icon className="w-4 h-4 flex-shrink-0" />
         {item.label}
@@ -97,7 +97,7 @@ function NavGroup({ item, pathname }: { item: NavItem; pathname: string }) {
     <div>
       <button onClick={() => setOpen(v => !v)}
         className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
-          isChildActive ? 'text-[#E8450A] bg-orange-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+          isChildActive ? 'text-[#F15A2B] bg-[#FEF3EE]' : 'text-gray-600 hover:text-gray-900 hover:bg-[#FEF3EE] hover:text-[#F15A2B]'
         }`}>
         <item.icon className="w-4 h-4 flex-shrink-0" />
         <span className="flex-1 text-left">{item.label}</span>
@@ -110,7 +110,7 @@ function NavGroup({ item, pathname }: { item: NavItem; pathname: string }) {
             return (
               <Link key={child.href} href={child.href}
                 className={`px-3 py-2 rounded-lg text-sm transition-all duration-200 ${
-                  isActive ? 'text-[#E8450A] font-semibold bg-orange-50' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'
+                  isActive ? 'text-[#F15A2B] font-semibold bg-[#FEF3EE]' : 'text-gray-500 hover:text-gray-800 hover:bg-[#FEF3EE] hover:text-[#F15A2B]'
                 }`}>
                 {child.label}
               </Link>
@@ -126,14 +126,14 @@ export default function ManufacturerLayout({ children }: { children: React.React
   const pathname = usePathname()
 
   return (
-    <div className="min-h-screen bg-[#F5F5F5] flex">
+    <div className="min-h-screen bg-[#F7F7F5] flex">
       {/* Sidebar — desktop */}
       <aside className="hidden md:flex flex-col w-64 border-r border-gray-200 bg-white flex-shrink-0 shadow-sm">
         {/* Logo */}
         <div className="h-16 flex items-center px-5 border-b border-gray-100">
           <Link href="/" className="flex items-center gap-2">
             <span className="font-['Syne',sans-serif] font-extrabold text-gray-900">
-              Bharat<span className="text-[#E8450A]">Deal</span>
+              Bharat<span className="text-[#F15A2B]">Deal</span>
             </span>
           </Link>
           <span className="ml-auto text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
@@ -175,7 +175,7 @@ export default function ManufacturerLayout({ children }: { children: React.React
       {/* Mobile top bar */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-white border-b border-gray-200 flex items-center px-4 shadow-sm">
         <span className="font-['Syne',sans-serif] font-extrabold text-gray-900">
-          Bharat<span className="text-[#E8450A]">Deal</span>
+          Bharat<span className="text-[#F15A2B]">Deal</span>
         </span>
         <span className="ml-2 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">Seller</span>
       </div>
@@ -192,7 +192,7 @@ export default function ManufacturerLayout({ children }: { children: React.React
           const isActive = pathname === href || pathname.startsWith(href + '/')
           return (
             <Link key={href} href={href}
-              className={`flex-1 flex flex-col items-center gap-1 py-2 transition-colors ${isActive ? 'text-[#E8450A]' : 'text-gray-400'}`}>
+              className={`flex-1 flex flex-col items-center gap-1 py-2 transition-colors ${isActive ? 'text-[#F15A2B]' : 'text-gray-400'}`}>
               <Icon className="w-4 h-4" strokeWidth={isActive ? 2.5 : 1.8} />
               <span className="text-[9px] font-medium">{label}</span>
             </Link>

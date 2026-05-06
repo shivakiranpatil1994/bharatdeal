@@ -18,7 +18,7 @@ function StatCard({
         </div>
       </div>
       {loading ? (
-        <div className="h-8 w-28 animate-pulse bg-gray-100 rounded-lg mb-1" />
+        <div className="h-8 w-28 animate-pulse bg-gray-100 rounded-xl mb-1" />
       ) : (
         <p className="font-['JetBrains_Mono',monospace] text-2xl font-bold text-gray-900">{value}</p>
       )}

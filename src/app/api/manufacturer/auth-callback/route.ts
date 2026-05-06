@@ -6,7 +6,9 @@ import type { Database } from '@/types/database'
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl
   const code = searchParams.get('code')
-  const next = searchParams.get('next') ?? '/manufacturer/dashboard'
+  // Restrict redirect to internal paths only — prevents open redirect attacks
+  const rawNext = searchParams.get('next') ?? '/manufacturer/dashboard'
+  const next = rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : '/manufacturer/dashboard'
 
   if (!code) {
     return NextResponse.redirect(new URL('/manufacturer/login?error=missing_code', req.url))

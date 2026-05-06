@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { openai } from '@ai-sdk/openai'
 import { generateText } from 'ai'
-import { createSupabaseAdmin } from '@/lib/supabase'
+import { createSupabaseServer, createSupabaseAdmin } from '@/lib/supabase'
 import { z } from 'zod'
 
 const RequestSchema = z.object({
@@ -10,6 +10,11 @@ const RequestSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
+    // Require authenticated manufacturer session
+    const supabaseAuth = await createSupabaseServer()
+    const { data: { user } } = await supabaseAuth.auth.getUser()
+    if (!user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
     const body = RequestSchema.safeParse(await req.json())
     if (!body.success) {
       return NextResponse.json({ error: 'Invalid input' }, { status: 400 })
@@ -17,6 +22,15 @@ export async function POST(req: NextRequest) {
 
     const { manufacturerId } = body.data
     const supabase = createSupabaseAdmin()
+
+    // Verify the authenticated user owns this manufacturer record
+    const { data: mfr } = await supabase
+      .from('manufacturers')
+      .select('id')
+      .eq('id', manufacturerId)
+      .eq('login_email', user.email)
+      .single()
+    if (!mfr) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
     // Fetch manufacturer info
     const { data: manufacturer, error: mfrError } = await supabase

@@ -151,7 +151,7 @@ export default function WalletPage() {
               key={preset.paise}
               onClick={() => handleTopup(preset.paise)}
               disabled={topping}
-              className="py-3 rounded-xl border-2 border-orange-200 bg-orange-50 text-[#E8450A] font-semibold text-sm hover:bg-orange-100 transition-colors disabled:opacity-50"
+              className="py-3 rounded-xl border-2 border-orange-200 bg-orange-50 text-[#F15A2B] font-semibold text-sm hover:bg-orange-100 transition-colors disabled:opacity-50"
             >
               {preset.label}
             </button>
@@ -167,13 +167,13 @@ export default function WalletPage() {
               value={customAmount}
               onChange={e => setCustomAmount(e.target.value)}
               min={200}
-              className="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#E8450A]"
+              className="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#F15A2B]"
             />
           </div>
           <button
             onClick={handleCustomTopup}
             disabled={topping || !customAmount}
-            className="px-5 py-2.5 rounded-xl bg-[#E8450A] text-white text-sm font-semibold hover:bg-orange-600 disabled:opacity-40 transition-colors flex items-center gap-2"
+            className="px-5 py-2.5 rounded-xl bg-[#F15A2B] text-white text-sm font-semibold hover:bg-orange-600 disabled:opacity-40 transition-colors flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
             Add

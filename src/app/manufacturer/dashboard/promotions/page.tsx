@@ -85,7 +85,7 @@ export default function PromotionsPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: 'Active Flash Deals', value: flashActive.length, color: 'text-[#E8450A]', bg: 'bg-orange-50' },
+          { label: 'Active Flash Deals', value: flashActive.length, color: 'text-[#F15A2B]', bg: 'bg-orange-50' },
           { label: 'Total Products', value: products.length, color: 'text-blue-600', bg: 'bg-blue-50' },
           { label: 'Avg Discount', value: flashActive.length ? Math.round(flashActive.reduce((s, p) => s + (p.flash_discount_pct ?? 0), 0) / flashActive.length) + '%' : '—', color: 'text-purple-600', bg: 'bg-purple-50' },
           { label: 'Ready to Promote', value: flashInactive.length, color: 'text-emerald-600', bg: 'bg-emerald-50' },
@@ -108,7 +108,7 @@ export default function PromotionsPage() {
           {flashActive.length > 0 && (
             <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
-                <Zap className="w-4 h-4 text-[#E8450A]" />
+                <Zap className="w-4 h-4 text-[#F15A2B]" />
                 <h2 className="font-semibold text-gray-900">Active Flash Deals</h2>
                 <span className="ml-auto text-xs text-gray-400">Products are live at discounted prices</span>
               </div>
@@ -118,9 +118,9 @@ export default function PromotionsPage() {
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-gray-900 truncate">{p.title}</p>
                       <div className="flex items-center gap-3 mt-1 flex-wrap">
-                        <span className="font-['JetBrains_Mono',monospace] text-sm font-bold text-[#E8450A]">{formatINR(p.price_paise)}</span>
+                        <span className="font-['JetBrains_Mono',monospace] text-sm font-bold text-[#F15A2B]">{formatINR(p.price_paise)}</span>
                         {p.mrp_paise && <span className="font-['JetBrains_Mono',monospace] text-xs text-gray-400 line-through">{formatINR(p.mrp_paise)}</span>}
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-orange-50 text-[#E8450A] border border-orange-100 font-semibold">{p.flash_discount_pct}% OFF</span>
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-orange-50 text-[#F15A2B] border border-orange-100 font-semibold">{p.flash_discount_pct}% OFF</span>
                       </div>
                       {p.flash_ends_at && <p className="text-xs text-gray-400 mt-1">Ends {new Date(p.flash_ends_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</p>}
                     </div>
@@ -155,7 +155,7 @@ export default function PromotionsPage() {
                       </div>
                     </div>
                     <button onClick={() => { setDealModal(p); setDiscountPct('10'); setDuration('24') }} disabled={togglingId === p.id}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-orange-50 text-[#E8450A] border border-orange-100 hover:bg-orange-100 transition-all disabled:opacity-50">
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-orange-50 text-[#F15A2B] border border-orange-100 hover:bg-orange-100 transition-all disabled:opacity-50">
                       <Zap className="w-3 h-3" /> Start Deal
                     </button>
                   </div>
@@ -184,12 +184,12 @@ export default function PromotionsPage() {
                 <label className="text-xs font-semibold text-gray-600 block mb-1.5">Discount Percentage</label>
                 <div className="relative">
                   <input type="number" min="1" max="90" value={discountPct} onChange={e => setDiscountPct(e.target.value)}
-                    className="w-full pl-4 pr-10 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-800 focus:border-[#E8450A] focus:outline-none" />
+                    className="w-full pl-4 pr-10 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-800 focus:border-[#F15A2B] focus:outline-none" />
                   <Percent className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 </div>
                 {discountPct && (
                   <p className="text-xs text-gray-500 mt-1.5">
-                    Discounted price: <span className="font-['JetBrains_Mono',monospace] font-bold text-[#E8450A]">
+                    Discounted price: <span className="font-['JetBrains_Mono',monospace] font-bold text-[#F15A2B]">
                       {formatINR(Math.round(dealModal.price_paise * (1 - (parseInt(discountPct) || 0) / 100)))}
                     </span>
                     <span className="ml-2 line-through text-gray-400">{formatINR(dealModal.price_paise)}</span>
@@ -201,7 +201,7 @@ export default function PromotionsPage() {
                 <div className="flex gap-2">
                   {['6', '12', '24', '48', '72'].map(h => (
                     <button key={h} onClick={() => setDuration(h)}
-                      className={`flex-1 py-2 rounded-xl text-xs font-semibold border transition-all ${duration === h ? 'bg-[#E8450A] text-white border-[#E8450A]' : 'border-gray-200 text-gray-600 hover:border-[#E8450A] hover:text-[#E8450A]'}`}>
+                      className={`flex-1 py-2 rounded-xl text-xs font-semibold border transition-all ${duration === h ? 'bg-[#F15A2B] text-white border-[#F15A2B]' : 'border-gray-200 text-gray-600 hover:border-[#F15A2B] hover:text-[#F15A2B]'}`}>
                       {h}h
                     </button>
                   ))}
@@ -217,7 +217,7 @@ export default function PromotionsPage() {
                 Cancel
               </button>
               <button onClick={() => startDeal(dealModal)} disabled={togglingId === dealModal.id}
-                className="flex-1 py-2.5 rounded-xl bg-[#E8450A] text-white text-sm font-semibold hover:bg-orange-700 transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+                className="flex-1 py-2.5 rounded-xl bg-[#F15A2B] text-white text-sm font-semibold hover:bg-orange-700 transition-all disabled:opacity-50 flex items-center justify-center gap-2">
                 <Zap className="w-4 h-4" /> Launch Deal
               </button>
             </div>

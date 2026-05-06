@@ -55,8 +55,8 @@ function ChatContent({ manufacturerId }: { manufacturerId: string }) {
           <ArrowLeft className="w-4 h-4" />
         </button>
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-[#E8450A]/10 flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-[#E8450A]" />
+          <div className="w-8 h-8 rounded-xl bg-[#F15A2B]/10 flex items-center justify-center">
+            <Sparkles className="w-4 h-4 text-[#F15A2B]" />
           </div>
           <div>
             <p className="text-sm font-semibold text-gray-900">AI Business Advisor</p>
@@ -73,8 +73,8 @@ function ChatContent({ manufacturerId }: { manufacturerId: string }) {
       <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-4 bg-[#F5F5F5]">
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full gap-5 py-8">
-            <div className="w-16 h-16 rounded-3xl bg-[#E8450A]/10 flex items-center justify-center">
-              <Sparkles className="w-8 h-8 text-[#E8450A]" />
+            <div className="w-16 h-16 rounded-3xl bg-[#F15A2B]/10 flex items-center justify-center">
+              <Sparkles className="w-8 h-8 text-[#F15A2B]" />
             </div>
             <div className="text-center max-w-sm">
               <h2 className="text-lg font-bold text-gray-900 mb-1">Your AI Business Advisor</h2>
@@ -85,7 +85,7 @@ function ChatContent({ manufacturerId }: { manufacturerId: string }) {
             <div className="flex flex-wrap gap-2 justify-center max-w-lg">
               {SUGGESTED_QUESTIONS.map((q) => (
                 <button key={q} onClick={() => handleSuggestion(q)} disabled={isLoading}
-                  className="text-xs px-3 py-2 rounded-full bg-white border border-gray-200 text-gray-600 hover:text-gray-900 hover:border-[#E8450A]/40 hover:bg-orange-50 transition-all duration-200 disabled:opacity-50 shadow-sm">
+                  className="text-xs px-3 py-2 rounded-full bg-white border border-gray-200 text-gray-600 hover:text-gray-900 hover:border-[#F15A2B]/40 hover:bg-orange-50 transition-all duration-200 disabled:opacity-50 shadow-sm">
                   {q}
                 </button>
               ))}
@@ -100,7 +100,7 @@ function ChatContent({ manufacturerId }: { manufacturerId: string }) {
                 <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-[85%] sm:max-w-[70%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap shadow-sm ${
                     m.role === 'user'
-                      ? 'bg-[#E8450A] text-white rounded-tr-sm'
+                      ? 'bg-[#F15A2B] text-white rounded-tr-sm'
                       : 'bg-white border border-gray-100 text-gray-800 rounded-tl-sm'
                   }`}>
                     {text}
@@ -124,7 +124,7 @@ function ChatContent({ manufacturerId }: { manufacturerId: string }) {
               <div className="flex flex-wrap gap-2 mt-2">
                 {SUGGESTED_QUESTIONS.slice(0, 3).map((q) => (
                   <button key={q} onClick={() => handleSuggestion(q)} disabled={isLoading}
-                    className="text-xs px-3 py-1.5 rounded-full bg-white border border-gray-200 text-gray-500 hover:text-gray-800 hover:border-[#E8450A]/40 transition-all duration-200 disabled:opacity-50">
+                    className="text-xs px-3 py-1.5 rounded-full bg-white border border-gray-200 text-gray-500 hover:text-gray-800 hover:border-[#F15A2B]/40 transition-all duration-200 disabled:opacity-50">
                     {q}
                   </button>
                 ))}
@@ -144,10 +144,10 @@ function ChatContent({ manufacturerId }: { manufacturerId: string }) {
             placeholder="Ask about your sales, trends, what to produce next…"
             rows={1}
             onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }}
-            className="flex-1 bg-gray-100 border border-gray-200 focus:border-[#E8450A] focus:bg-white rounded-xl px-4 py-3 text-sm text-gray-800 placeholder:text-gray-400 outline-none resize-none transition-all duration-200 max-h-32 overflow-y-auto"
+            className="flex-1 bg-gray-100 border border-gray-200 focus:border-[#F15A2B] focus:bg-white rounded-xl px-4 py-3 text-sm text-gray-800 placeholder:text-gray-400 outline-none resize-none transition-all duration-200 max-h-32 overflow-y-auto"
           />
           <button type="button" onClick={handleSend} disabled={isLoading || !inputValue.trim()}
-            className="flex-shrink-0 w-10 h-10 rounded-xl bg-[#E8450A] hover:bg-orange-700 text-white flex items-center justify-center transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm">
+            className="flex-shrink-0 w-10 h-10 rounded-xl bg-[#F15A2B] hover:bg-orange-700 text-white flex items-center justify-center transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm">
             {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
           </button>
         </div>

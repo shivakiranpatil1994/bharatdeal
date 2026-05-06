@@ -48,7 +48,7 @@ function Input({ label, value, onChange, type = 'text', placeholder = '', requir
     <div className="flex flex-col gap-1.5">
       <label className="text-sm font-medium text-gray-700">{label}{required && <span className="text-red-500 ml-0.5">*</span>}</label>
       <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-        className="px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-gray-800 placeholder:text-gray-400 focus:border-[#E8450A] focus:bg-white focus:outline-none transition-colors text-sm" />
+        className="px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-gray-800 placeholder:text-gray-400 focus:border-[#F15A2B] focus:bg-white focus:outline-none transition-colors text-sm" />
     </div>
   )
 }
@@ -60,7 +60,7 @@ function Select({ label, value, onChange, options, required = false }: {
     <div className="flex flex-col gap-1.5">
       <label className="text-sm font-medium text-gray-700">{label}{required && <span className="text-red-500 ml-0.5">*</span>}</label>
       <select value={value} onChange={e => onChange(e.target.value)}
-        className="px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-gray-800 focus:border-[#E8450A] focus:bg-white focus:outline-none transition-colors text-sm">
+        className="px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-gray-800 focus:border-[#F15A2B] focus:bg-white focus:outline-none transition-colors text-sm">
         <option value="">Select…</option>
         {options.map(o => <option key={o} value={o}>{o}</option>)}
       </select>
@@ -109,12 +109,12 @@ export default function SellerSignupPage() {
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">What happens next</p>
           {['Admin reviews your business documents', 'Background check on GST & PAN', 'Store approval & onboarding call', 'Start listing products & earning'].map((s, i) => (
             <div key={s} className="flex items-start gap-2 text-sm text-gray-600">
-              <span className="w-5 h-5 rounded-full bg-[#E8450A] text-white text-xs flex items-center justify-center flex-shrink-0 mt-0.5">{i + 1}</span>
+              <span className="w-5 h-5 rounded-full bg-[#F15A2B] text-white text-xs flex items-center justify-center flex-shrink-0 mt-0.5">{i + 1}</span>
               {s}
             </div>
           ))}
         </div>
-        <Link href="/" className="text-sm text-[#E8450A] hover:underline">Back to Store</Link>
+        <Link href="/" className="text-sm text-[#F15A2B] hover:underline">Back to Store</Link>
       </div>
     </div>
   )
@@ -125,7 +125,7 @@ export default function SellerSignupPage() {
         {/* Header */}
         <div className="flex flex-col items-center mb-8">
           <Link href="/" className="font-['Syne',sans-serif] font-extrabold text-2xl text-gray-900 mb-1">
-            Bharat<span className="text-[#E8450A]">Deal</span>
+            Bharat<span className="text-[#F15A2B]">Deal</span>
           </Link>
           <p className="text-sm text-gray-500">Become a Verified Seller</p>
         </div>
@@ -136,16 +136,16 @@ export default function SellerSignupPage() {
             <div key={s.id} className="flex items-center flex-1">
               <div className="flex flex-col items-center">
                 <div className={`w-9 h-9 rounded-full flex items-center justify-center border-2 transition-all ${
-                  step > s.id ? 'bg-[#E8450A] border-[#E8450A]' : step === s.id ? 'border-[#E8450A] bg-white' : 'border-gray-200 bg-white'
+                  step > s.id ? 'bg-[#F15A2B] border-[#F15A2B]' : step === s.id ? 'border-[#F15A2B] bg-white' : 'border-gray-200 bg-white'
                 }`}>
                   {step > s.id
                     ? <CheckCircle2 className="w-5 h-5 text-white" />
-                    : <s.icon className={`w-4 h-4 ${step === s.id ? 'text-[#E8450A]' : 'text-gray-300'}`} />
+                    : <s.icon className={`w-4 h-4 ${step === s.id ? 'text-[#F15A2B]' : 'text-gray-300'}`} />
                   }
                 </div>
-                <p className={`text-xs mt-1 font-medium whitespace-nowrap ${step === s.id ? 'text-[#E8450A]' : 'text-gray-400'}`}>{s.label}</p>
+                <p className={`text-xs mt-1 font-medium whitespace-nowrap ${step === s.id ? 'text-[#F15A2B]' : 'text-gray-400'}`}>{s.label}</p>
               </div>
-              {i < STEPS.length - 1 && <div className={`flex-1 h-0.5 mx-2 mb-4 ${step > s.id ? 'bg-[#E8450A]' : 'bg-gray-200'}`} />}
+              {i < STEPS.length - 1 && <div className={`flex-1 h-0.5 mx-2 mb-4 ${step > s.id ? 'bg-[#F15A2B]' : 'bg-gray-200'}`} />}
             </div>
           ))}
         </div>
@@ -154,7 +154,7 @@ export default function SellerSignupPage() {
         <div className="bg-white border border-gray-100 rounded-3xl shadow-sm p-6 sm:p-8">
           {step === 1 && (
             <div className="space-y-4">
-              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2"><Store className="w-5 h-5 text-[#E8450A]" /> Business Information</h2>
+              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2"><Store className="w-5 h-5 text-[#F15A2B]" /> Business Information</h2>
               <Select label="Business Type" value={form.businessType} onChange={set('businessType')} options={BUSINESS_TYPES} required />
               <Input label="Business / Brand Name" value={form.businessName} onChange={set('businessName')} placeholder="Tirupur Cotton Co" required />
               <div className="grid grid-cols-2 gap-4">
@@ -173,7 +173,7 @@ export default function SellerSignupPage() {
 
           {step === 2 && (
             <div className="space-y-4">
-              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2"><FileText className="w-5 h-5 text-[#E8450A]" /> Seller Details</h2>
+              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2"><FileText className="w-5 h-5 text-[#F15A2B]" /> Seller Details</h2>
               <div className="grid grid-cols-2 gap-4">
                 <Input label="Contact Person Name" value={form.contactName} onChange={set('contactName')} placeholder="Rajesh Kumar" required />
                 <Input label="Role / Designation" value={form.contactRole} onChange={set('contactRole')} placeholder="Owner / Manager" required />
@@ -194,14 +194,14 @@ export default function SellerSignupPage() {
 
           {step === 3 && (
             <div className="space-y-4">
-              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2"><Package className="w-5 h-5 text-[#E8450A]" /> Store Setup</h2>
+              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2"><Package className="w-5 h-5 text-[#F15A2B]" /> Store Setup</h2>
               <Input label="Store Name" value={form.storeName} onChange={set('storeName')} placeholder="Tirupur Cotton House" required />
               <Select label="Primary Category" value={form.category} onChange={set('category')} options={CATEGORIES} required />
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-medium text-gray-700">Store Description <span className="text-red-500">*</span></label>
                 <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
                   placeholder="Tell buyers about your factory, products, and what makes you unique…"
-                  rows={4} className="px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-gray-800 placeholder:text-gray-400 focus:border-[#E8450A] focus:bg-white focus:outline-none transition-colors text-sm resize-none" />
+                  rows={4} className="px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-gray-800 placeholder:text-gray-400 focus:border-[#F15A2B] focus:bg-white focus:outline-none transition-colors text-sm resize-none" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <Input label="Monthly Production Capacity (units)" value={form.monthlyCapacity} onChange={set('monthlyCapacity')} placeholder="500" required />
@@ -217,13 +217,13 @@ export default function SellerSignupPage() {
 
           {step === 4 && (
             <div className="space-y-4">
-              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2"><Truck className="w-5 h-5 text-[#E8450A]" /> Shipping & Payout</h2>
+              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2"><Truck className="w-5 h-5 text-[#F15A2B]" /> Shipping & Payout</h2>
               <Input label="Ship From Address" value={form.shippingFrom} onChange={set('shippingFrom')} placeholder="Factory address or warehouse" required />
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-sm font-medium text-gray-700">Payout Schedule <span className="text-red-500">*</span></label>
                   <select value={form.payoutSchedule} onChange={e => setForm(f => ({ ...f, payoutSchedule: e.target.value }))}
-                    className="px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-gray-800 focus:border-[#E8450A] focus:bg-white focus:outline-none transition-colors text-sm">
+                    className="px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-gray-800 focus:border-[#F15A2B] focus:bg-white focus:outline-none transition-colors text-sm">
                     <option value="T+7">T+7 (Free)</option>
                     <option value="T+2">T+2 (1% fee)</option>
                     <option value="T+0">T+0 (2% fee)</option>
@@ -260,12 +260,12 @@ export default function SellerSignupPage() {
             )}
             {step < 4 ? (
               <button onClick={() => setStep(s => s + 1)}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#E8450A] hover:bg-orange-700 text-white text-sm font-semibold transition-colors shadow-sm">
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#F15A2B] hover:bg-orange-700 text-white text-sm font-semibold transition-colors shadow-sm">
                 Continue <ChevronRight className="w-4 h-4" />
               </button>
             ) : (
               <button onClick={handleSubmit} disabled={loading}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#E8450A] hover:bg-orange-700 text-white text-sm font-semibold transition-colors shadow-sm disabled:opacity-50">
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#F15A2B] hover:bg-orange-700 text-white text-sm font-semibold transition-colors shadow-sm disabled:opacity-50">
                 {loading ? 'Submitting…' : 'Submit Application'}
                 {!loading && <ChevronRight className="w-4 h-4" />}
               </button>
@@ -275,8 +275,8 @@ export default function SellerSignupPage() {
 
         <p className="text-center text-xs text-gray-400 mt-6">
           By applying you agree to BharatDeal&apos;s{' '}
-          <a href="#" className="text-[#E8450A] hover:underline">Seller Terms</a> and{' '}
-          <a href="#" className="text-[#E8450A] hover:underline">Privacy Policy</a>.
+          <a href="#" className="text-[#F15A2B] hover:underline">Seller Terms</a> and{' '}
+          <a href="#" className="text-[#F15A2B] hover:underline">Privacy Policy</a>.
         </p>
       </div>
     </div>

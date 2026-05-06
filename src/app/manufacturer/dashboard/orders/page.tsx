@@ -122,7 +122,7 @@ function OrdersPage() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search order, buyer…"
-              className="pl-9 pr-4 py-2 rounded-xl bg-white border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 focus:border-[#E8450A] focus:outline-none w-56 shadow-sm" />
+              className="pl-9 pr-4 py-2 rounded-xl bg-white border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 focus:border-[#F15A2B] focus:outline-none w-56 shadow-sm" />
           </div>
         </div>
       </div>
@@ -159,11 +159,11 @@ function OrdersPage() {
         {TABS.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
             className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-all -mb-px ${
-              tab === t.id ? 'border-[#E8450A] text-[#E8450A]' : 'border-transparent text-gray-500 hover:text-gray-800'
+              tab === t.id ? 'border-[#F15A2B] text-[#F15A2B]' : 'border-transparent text-gray-500 hover:text-gray-800'
             }`}>
             {t.label}
             {counts[t.id] > 0 && (
-              <span className={`text-xs px-1.5 py-0.5 rounded-full font-semibold ${tab === t.id ? 'bg-[#E8450A] text-white' : 'bg-gray-100 text-gray-500'}`}>
+              <span className={`text-xs px-1.5 py-0.5 rounded-full font-semibold ${tab === t.id ? 'bg-[#F15A2B] text-white' : 'bg-gray-100 text-gray-500'}`}>
                 {counts[t.id]}
               </span>
             )}
@@ -204,7 +204,7 @@ function OrdersPage() {
 
                     {/* Order details */}
                     <td className="px-4 py-4">
-                      <p className="text-xs font-mono text-[#E8450A] font-semibold">BD-{o.id.slice(0, 12).toUpperCase()}</p>
+                      <p className="text-xs font-mono text-[#F15A2B] font-semibold">BD-{o.id.slice(0, 12).toUpperCase()}</p>
                       <p className="text-xs text-gray-500 mt-0.5">Buyer: {o.buyer_name ?? o.buyer_phone}</p>
                       <p className="text-xs text-gray-400 capitalize">{o.payment_method} · {o.payment_status}</p>
                     </td>
@@ -235,7 +235,7 @@ function OrdersPage() {
 
                     {/* Price */}
                     <td className="px-4 py-4">
-                      <p className="font-['JetBrains_Mono',monospace] font-semibold text-[#E8450A] text-sm">{formatINR(o.amount_paise)}</p>
+                      <p className="font-['JetBrains_Mono',monospace] font-semibold text-[#F15A2B] text-sm">{formatINR(o.amount_paise)}</p>
                     </td>
 
                     {/* Location */}
@@ -257,7 +257,7 @@ function OrdersPage() {
                       <div className="flex flex-col gap-1.5">
                         {o.status === 'placed' && (
                           <button onClick={() => updateStatus(o.id, 'confirmed')} disabled={updatingId === o.id}
-                            className="px-3 py-1.5 rounded-lg bg-[#E8450A] hover:bg-orange-700 text-white text-xs font-semibold transition-colors disabled:opacity-50 whitespace-nowrap">
+                            className="px-3 py-1.5 rounded-lg bg-[#F15A2B] hover:bg-orange-700 text-white text-xs font-semibold transition-colors disabled:opacity-50 whitespace-nowrap">
                             Confirm Order
                           </button>
                         )}

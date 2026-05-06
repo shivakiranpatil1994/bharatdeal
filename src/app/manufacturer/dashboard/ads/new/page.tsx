@@ -101,7 +101,7 @@ export default function NewCampaignPage() {
       {/* Progress */}
       <div className="flex gap-1">
         {([1,2,3] as Step[]).map(s => (
-          <div key={s} className={`flex-1 h-1 rounded-full transition-colors ${s <= step ? 'bg-[#E8450A]' : 'bg-gray-200'}`} />
+          <div key={s} className={`flex-1 h-1 rounded-full transition-colors ${s <= step ? 'bg-[#F15A2B]' : 'bg-gray-200'}`} />
         ))}
       </div>
 
@@ -115,7 +115,7 @@ export default function NewCampaignPage() {
               value={form.name}
               onChange={e => update('name', e.target.value)}
               placeholder="e.g. Tirupur Cotton T-shirts – Summer"
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:outline-none focus:border-[#E8450A]"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:outline-none focus:border-[#F15A2B]"
             />
           </div>
 
@@ -124,7 +124,7 @@ export default function NewCampaignPage() {
             <div className="space-y-2">
               {AD_TYPES.map(t => (
                 <button key={t.value} onClick={() => update('adType', t.value)}
-                  className={`w-full text-left p-4 rounded-xl border-2 transition-colors ${form.adType === t.value ? 'border-[#E8450A] bg-orange-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                  className={`w-full text-left p-4 rounded-xl border-2 transition-colors ${form.adType === t.value ? 'border-[#F15A2B] bg-orange-50' : 'border-gray-200 hover:border-gray-300'}`}>
                   <p className="font-semibold text-gray-900 text-sm">{t.label}</p>
                   <p className="text-xs text-gray-500 mt-0.5">{t.desc} · Min bid: {formatINRFromPaise(t.minBid)}/click</p>
                 </button>
@@ -140,7 +140,7 @@ export default function NewCampaignPage() {
               <select
                 value={form.productId}
                 onChange={e => update('productId', e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:outline-none focus:border-[#E8450A]"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:outline-none focus:border-[#F15A2B]"
               >
                 <option value="">Select a product…</option>
                 {products.map(p => (
@@ -153,7 +153,7 @@ export default function NewCampaignPage() {
           <button
             onClick={() => setStep(2)}
             disabled={!form.name.trim() || !form.productId}
-            className="w-full py-3 rounded-xl bg-[#E8450A] text-white font-semibold text-sm hover:bg-orange-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3 rounded-xl bg-[#F15A2B] text-white font-semibold text-sm hover:bg-orange-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
           >
             Next <ChevronRight className="w-4 h-4" />
           </button>
@@ -171,7 +171,7 @@ export default function NewCampaignPage() {
               onChange={e => update('keywords', e.target.value)}
               placeholder="cotton t-shirt, round neck tee, casual wear, tirupur cotton"
               rows={3}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:outline-none focus:border-[#E8450A] resize-none"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:outline-none focus:border-[#F15A2B] resize-none"
             />
           </div>
 
@@ -183,7 +183,7 @@ export default function NewCampaignPage() {
               value={form.categories}
               onChange={e => update('categories', e.target.value)}
               placeholder="Cotton Knitwear, Kids Wear"
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:outline-none focus:border-[#E8450A]"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:outline-none focus:border-[#F15A2B]"
             />
           </div>
 
@@ -198,7 +198,7 @@ export default function NewCampaignPage() {
             <button onClick={() => setStep(1)} className="flex-1 py-3 rounded-xl border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors">
               Back
             </button>
-            <button onClick={() => setStep(3)} className="flex-1 py-3 rounded-xl bg-[#E8450A] text-white font-semibold text-sm hover:bg-orange-600 transition-colors flex items-center justify-center gap-2">
+            <button onClick={() => setStep(3)} className="flex-1 py-3 rounded-xl bg-[#F15A2B] text-white font-semibold text-sm hover:bg-orange-600 transition-colors flex items-center justify-center gap-2">
               Next <ChevronRight className="w-4 h-4" />
             </button>
           </div>
@@ -229,7 +229,7 @@ export default function NewCampaignPage() {
                 onChange={e => update('maxBidPaise', Math.max(minBid, Math.round(parseFloat(e.target.value) * 100)))}
                 step="0.5"
                 min={minBid / 100}
-                className="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:outline-none focus:border-[#E8450A]"
+                className="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:outline-none focus:border-[#F15A2B]"
               />
             </div>
           </div>
@@ -247,7 +247,7 @@ export default function NewCampaignPage() {
                 onChange={e => update('dailyBudgetPaise', Math.max(10000, Math.round(parseFloat(e.target.value) * 100)))}
                 step="100"
                 min={100}
-                className="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:outline-none focus:border-[#E8450A]"
+                className="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:outline-none focus:border-[#F15A2B]"
               />
             </div>
           </div>
@@ -265,7 +265,7 @@ export default function NewCampaignPage() {
                 onChange={e => update('totalBudgetPaise', Math.max(form.dailyBudgetPaise, Math.round(parseFloat(e.target.value) * 100)))}
                 step="100"
                 min={form.dailyBudgetPaise / 100}
-                className="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:outline-none focus:border-[#E8450A]"
+                className="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:outline-none focus:border-[#F15A2B]"
               />
             </div>
           </div>
@@ -276,7 +276,7 @@ export default function NewCampaignPage() {
               type="date"
               value={form.endDate}
               onChange={e => update('endDate', e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:outline-none focus:border-[#E8450A] [color-scheme:light]"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:outline-none focus:border-[#F15A2B] [color-scheme:light]"
             />
           </div>
 
@@ -293,7 +293,7 @@ export default function NewCampaignPage() {
             <button
               onClick={submit}
               disabled={submitting || balancePaise < form.dailyBudgetPaise}
-              className="flex-1 py-3 rounded-xl bg-[#E8450A] text-white font-semibold text-sm hover:bg-orange-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="flex-1 py-3 rounded-xl bg-[#F15A2B] text-white font-semibold text-sm hover:bg-orange-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               {submitting ? 'Submitting…' : 'Launch Campaign'}
             </button>

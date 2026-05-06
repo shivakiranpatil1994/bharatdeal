@@ -23,7 +23,7 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-3 text-sm shadow-lg">
       <p className="text-gray-400 mb-1 text-xs">{label}</p>
-      <p className="font-semibold text-[#E8450A]">{payload[0].value} orders</p>
+      <p className="font-semibold text-[#F15A2B]">{payload[0].value} orders</p>
     </div>
   )
 }
@@ -92,7 +92,7 @@ export function PincodeMap({ manufacturerId }: { manufacturerId: string }) {
               <XAxis type="number" tick={{ fill: '#9CA3AF', fontSize: 11 }} axisLine={false} tickLine={false} />
               <YAxis type="category" dataKey="state" tick={{ fill: '#6B7280', fontSize: 11 }} axisLine={false} tickLine={false} width={55} />
               <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="orders" fill="#E8450A" radius={[0, 4, 4, 0]} maxBarSize={20} />
+              <Bar dataKey="orders" fill="#F15A2B" radius={[0, 4, 4, 0]} maxBarSize={20} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -120,7 +120,7 @@ export function PincodeMap({ manufacturerId }: { manufacturerId: string }) {
                   <td className="px-4 py-3 text-gray-700">{p.city}</td>
                   <td className="px-4 py-3 text-gray-500">{p.state}</td>
                   <td className="px-4 py-3 font-['JetBrains_Mono',monospace] text-gray-900 font-semibold">{p.orders}</td>
-                  <td className="px-4 py-3 font-['JetBrains_Mono',monospace] text-[#E8450A] font-semibold">{formatINR(p.revenue)}</td>
+                  <td className="px-4 py-3 font-['JetBrains_Mono',monospace] text-[#F15A2B] font-semibold">{formatINR(p.revenue)}</td>
                   <td className="px-4 py-3 font-['JetBrains_Mono',monospace]">
                     <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${p.rtoRate >= 20 ? 'bg-red-50 text-red-600' : p.rtoRate >= 10 ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}`}>
                       {p.rtoRate.toFixed(1)}%

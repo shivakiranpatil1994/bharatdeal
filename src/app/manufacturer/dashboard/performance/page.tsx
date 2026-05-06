@@ -265,7 +265,7 @@ function PerformancePage() {
                 <div key={r.id} className="px-5 py-4 space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center text-xs font-bold text-[#E8450A]">
+                      <div className="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center text-xs font-bold text-[#F15A2B]">
                         {r.name[0]}
                       </div>
                       <div>

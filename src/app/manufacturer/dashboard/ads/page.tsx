@@ -77,7 +77,7 @@ export default function AdsPage() {
         </div>
         <Link
           href="/manufacturer/dashboard/ads/new"
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#E8450A] text-white text-sm font-semibold hover:bg-orange-600 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#F15A2B] text-white text-sm font-semibold hover:bg-orange-600 transition-colors"
         >
           <Plus className="w-4 h-4" />
           New Campaign
@@ -89,7 +89,7 @@ export default function AdsPage() {
         <div className="bg-white rounded-xl border border-gray-200 p-4">
           <p className="text-xs text-gray-500 mb-1">Wallet Balance</p>
           <p className="text-xl font-bold text-gray-900 font-mono">{formatINRFromPaise(balancePaise)}</p>
-          <Link href="/manufacturer/dashboard/ads/wallet" className="text-xs text-[#E8450A] mt-1 block">
+          <Link href="/manufacturer/dashboard/ads/wallet" className="text-xs text-[#F15A2B] mt-1 block">
             Add funds →
           </Link>
         </div>
@@ -135,7 +135,7 @@ export default function AdsPage() {
           <p className="text-sm text-gray-500 mb-6 max-w-xs mx-auto">
             Reach buyers actively searching for products like yours. Pay only when they click.
           </p>
-          <Link href="/manufacturer/dashboard/ads/wallet" className="inline-block px-6 py-2.5 rounded-xl bg-[#E8450A] text-white text-sm font-semibold hover:bg-orange-600 transition-colors">
+          <Link href="/manufacturer/dashboard/ads/wallet" className="inline-block px-6 py-2.5 rounded-xl bg-[#F15A2B] text-white text-sm font-semibold hover:bg-orange-600 transition-colors">
             Add wallet balance
           </Link>
         </div>
@@ -205,7 +205,7 @@ export default function AdsPage() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <Link href={`/manufacturer/dashboard/ads/${c.id}`} className="text-xs text-[#E8450A] font-medium hover:underline">
+                        <Link href={`/manufacturer/dashboard/ads/${c.id}`} className="text-xs text-[#F15A2B] font-medium hover:underline">
                           View
                         </Link>
                       </td>

@@ -150,7 +150,7 @@ function SKUsPage() {
         ] as const).map(({ id, label, icon: Icon }) => (
           <button key={id} onClick={() => setActiveTab(id)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-              activeTab === id ? 'bg-white text-[#E8450A] shadow-sm' : 'text-gray-500 hover:text-gray-800'
+              activeTab === id ? 'bg-white text-[#F15A2B] shadow-sm' : 'text-gray-500 hover:text-gray-800'
             }`}>
             <Icon className="w-3.5 h-3.5" />{label}
           </button>
@@ -164,7 +164,7 @@ function SKUsPage() {
             {([7, 30, 90] as DayRange[]).map((d) => (
               <button key={d} onClick={() => setDayRange(d)}
                 className={`px-4 py-1.5 rounded-xl text-sm font-semibold transition-all duration-200 border ${
-                  dayRange === d ? 'border-[#E8450A] text-[#E8450A] bg-orange-50' : 'border-gray-200 text-gray-500 hover:bg-gray-100'
+                  dayRange === d ? 'border-[#F15A2B] text-[#F15A2B] bg-orange-50' : 'border-gray-200 text-gray-500 hover:bg-gray-100'
                 }`}>
                 {d}d
               </button>
@@ -202,7 +202,7 @@ function SKUsPage() {
                         <tr key={sku.productId} className="hover:bg-gray-50 transition-colors">
                           <td className="px-4 py-3 text-gray-900 font-medium max-w-[200px] truncate">{sku.title}</td>
                           <td className="px-4 py-3 font-['JetBrains_Mono',monospace] text-gray-800">{sku.totalOrders.toLocaleString('en-IN')}</td>
-                          <td className="px-4 py-3 font-['JetBrains_Mono',monospace] text-[#E8450A] font-semibold">{formatINR(sku.totalRevenue)}</td>
+                          <td className="px-4 py-3 font-['JetBrains_Mono',monospace] text-[#F15A2B] font-semibold">{formatINR(sku.totalRevenue)}</td>
                           <td className="px-4 py-3 font-['JetBrains_Mono',monospace] text-gray-600">{sku.avgReturnRate.toFixed(1)}%</td>
                           <td className="px-4 py-3 font-['JetBrains_Mono',monospace] text-gray-600">{sku.stock.toLocaleString('en-IN')}</td>
                           <td className="px-4 py-3"><TrendBadge trend={sku.trend} /></td>
@@ -233,7 +233,7 @@ function SKUsPage() {
                           <XAxis dataKey="date" tick={{ fill: '#9CA3AF', fontSize: 11 }} axisLine={false} tickLine={false} />
                           <YAxis tick={{ fill: '#9CA3AF', fontSize: 11 }} axisLine={false} tickLine={false} />
                           <Tooltip content={<CustomTooltip />} />
-                          <Bar dataKey="orders" name="orders" fill="#E8450A" radius={[4, 4, 0, 0]} maxBarSize={40} />
+                          <Bar dataKey="orders" name="orders" fill="#F15A2B" radius={[4, 4, 0, 0]} maxBarSize={40} />
                         </BarChart>
                       </ResponsiveContainer>
                     ) : <div className="h-48" />}

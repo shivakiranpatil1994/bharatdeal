@@ -67,7 +67,7 @@ export default function CampaignDetailPage({ params }: { params: { id: string } 
     return (
       <div className="p-6 max-w-4xl mx-auto text-center py-20">
         <p className="text-gray-500">Campaign not found.</p>
-        <Link href="/manufacturer/dashboard/ads" className="text-[#E8450A] text-sm mt-2 inline-block">← Back to Ads</Link>
+        <Link href="/manufacturer/dashboard/ads" className="text-[#F15A2B] text-sm mt-2 inline-block">← Back to Ads</Link>
       </div>
     )
   }
@@ -101,7 +101,7 @@ export default function CampaignDetailPage({ params }: { params: { id: string } 
             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${
               campaign.status === 'active'
                 ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                : 'bg-[#E8450A] text-white hover:bg-orange-600'
+                : 'bg-[#F15A2B] text-white hover:bg-orange-600'
             }`}
           >
             {campaign.status === 'active' ? <><Pause className="w-4 h-4" /> Pause</> : <><Play className="w-4 h-4" /> Resume</>}
@@ -227,7 +227,7 @@ export default function CampaignDetailPage({ params }: { params: { id: string } 
             <div>
               <p className="font-medium text-gray-900">{campaign.products.title}</p>
               <p className="text-sm text-gray-500 font-mono">{formatINRFromPaise(campaign.products.price_paise)}</p>
-              <Link href={`/products/${campaign.products.id}`} target="_blank" className="text-xs text-[#E8450A] hover:underline">
+              <Link href={`/products/${campaign.products.id}`} target="_blank" className="text-xs text-[#F15A2B] hover:underline">
                 View product →
               </Link>
             </div>

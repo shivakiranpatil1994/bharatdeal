@@ -39,7 +39,7 @@ export default function ManufacturerDashboardPage() {
     return (
       <div className="p-6 flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center">
         <div className="w-16 h-16 rounded-2xl bg-orange-50 flex items-center justify-center">
-          <BarChart2 className="w-7 h-7 text-[#E8450A]" />
+          <BarChart2 className="w-7 h-7 text-[#F15A2B]" />
         </div>
         <div>
           <p className="font-semibold text-gray-800">No manufacturer data found</p>
@@ -64,7 +64,7 @@ export default function ManufacturerDashboardPage() {
             <span className="hidden sm:inline">Analytics</span>
           </Link>
           <Link href="/manufacturer/dashboard/ai"
-            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#E8450A] hover:bg-orange-700 text-white text-sm font-semibold transition-colors shadow-sm">
+            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#F15A2B] hover:bg-orange-700 text-white text-sm font-semibold transition-colors shadow-sm">
             <MessageSquare className="w-4 h-4" />
             <span className="hidden sm:inline">Ask AI</span>
           </Link>
@@ -84,7 +84,7 @@ export default function ManufacturerDashboardPage() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           { href: '/manufacturer/dashboard/skus', icon: BarChart2, label: 'SKU Performance', color: 'text-blue-600', bg: 'bg-blue-50' },
-          { href: '/manufacturer/dashboard/ai', icon: MessageSquare, label: 'AI Business Chat', color: 'text-[#E8450A]', bg: 'bg-orange-50' },
+          { href: '/manufacturer/dashboard/ai', icon: MessageSquare, label: 'AI Business Chat', color: 'text-[#F15A2B]', bg: 'bg-orange-50' },
           { href: '/manufacturer/dashboard/skus', icon: MapPin, label: 'Pincode Demand', color: 'text-purple-600', bg: 'bg-purple-50' },
           { href: '/manufacturer/dashboard/skus', icon: RotateCcw, label: 'Return Analysis', color: 'text-amber-600', bg: 'bg-amber-50' },
         ].map(({ href, icon: Icon, label, color, bg }) => (

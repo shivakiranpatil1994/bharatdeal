@@ -17,11 +17,11 @@ const TYPE_LABEL: Record<string, string> = {
 }
 
 const TYPE_COLOR: Record<string, string> = {
-  daily_summary:   'text-blue-600 bg-blue-50 border-blue-100',
-  opportunity:     'text-emerald-600 bg-emerald-50 border-emerald-100',
-  alert:           'text-red-600 bg-red-50 border-red-100',
-  trend:           'text-purple-600 bg-purple-50 border-purple-100',
-  production_plan: 'text-amber-600 bg-amber-50 border-amber-100',
+  daily_summary:   'text-blue-700 bg-blue-50/80 border-blue-200',
+  opportunity:     'text-emerald-700 bg-emerald-50/80 border-emerald-200',
+  alert:           'text-red-700 bg-red-50/80 border-red-200',
+  trend:           'text-purple-700 bg-purple-50/80 border-purple-200',
+  production_plan: 'text-amber-700 bg-amber-50/80 border-amber-200',
 }
 
 export function DailyInsights({ manufacturerId }: { manufacturerId: string }) {
@@ -47,7 +47,7 @@ export function DailyInsights({ manufacturerId }: { manufacturerId: string }) {
           <Sparkles className="w-4 h-4 text-amber-500" />
           <h2 className="font-semibold text-gray-900">AI Insights</h2>
         </div>
-        <Link href="/manufacturer/dashboard/ai" className="text-xs text-[#E8450A] hover:underline flex items-center gap-1 font-medium">
+        <Link href="/manufacturer/dashboard/ai" className="text-xs text-[#F15A2B] hover:underline flex items-center gap-1 font-medium">
           Ask AI <ChevronRight className="w-3 h-3" />
         </Link>
       </div>
@@ -66,14 +66,14 @@ export function DailyInsights({ manufacturerId }: { manufacturerId: string }) {
               <p className="text-sm font-medium text-gray-600">No insights yet</p>
               <p className="text-xs text-gray-400 mt-1">Generated daily once orders come in.</p>
             </div>
-            <Link href="/manufacturer/dashboard/ai" className="px-4 py-2 rounded-xl bg-[#E8450A]/10 border border-[#E8450A]/20 text-sm text-[#E8450A] hover:bg-[#E8450A]/20 transition-colors font-medium">
+            <Link href="/manufacturer/dashboard/ai" className="px-4 py-2 rounded-xl bg-[#F15A2B]/10 border border-[#F15A2B]/20 text-sm text-[#F15A2B] hover:bg-[#F15A2B]/20 transition-colors font-medium">
               Ask AI instead
             </Link>
           </div>
         ) : (
           <div className="p-4 space-y-3">
             {insights.map((insight) => (
-              <div key={insight.id} className="bg-gray-50 border border-gray-100 rounded-xl p-4 space-y-2">
+              <div key={insight.id} className="bg-white border border-gray-100 rounded-xl p-4 space-y-2 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-center gap-2">
                   <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${TYPE_COLOR[insight.insight_type] ?? TYPE_COLOR.daily_summary}`}>
                     {TYPE_LABEL[insight.insight_type] ?? insight.insight_type}

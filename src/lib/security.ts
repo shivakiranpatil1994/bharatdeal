@@ -2,29 +2,39 @@ import crypto from 'crypto'
 import { NextRequest } from 'next/server'
 
 export function verifyRazorpayWebhook(body: string, signature: string): boolean {
+  const secret = process.env.RAZORPAY_WEBHOOK_SECRET
+  if (!secret || !signature) return false
   const expected = crypto
-    .createHmac('sha256', process.env.RAZORPAY_WEBHOOK_SECRET!)
+    .createHmac('sha256', secret)
     .update(body)
     .digest('hex')
-  return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature))
+  try {
+    return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature))
+  } catch {
+    return false
+  }
 }
 
-// Verifies Razorpay payment signature: HMAC-SHA256(orderId|paymentId, KEY_SECRET)
 export function verifyRazorpayPayment(
   razorpayOrderId: string,
   razorpayPaymentId: string,
   signature: string
 ): boolean {
-  const payload = `${razorpayOrderId}|${razorpayPaymentId}`
-  const expected = crypto
-    .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!)
-    .update(payload)
-    .digest('hex')
-  return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature))
+  const secret = process.env.RAZORPAY_KEY_SECRET
+  if (!secret || !signature) return false
+  const payload  = `${razorpayOrderId}|${razorpayPaymentId}`
+  const expected = crypto.createHmac('sha256', secret).update(payload).digest('hex')
+  try {
+    return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature))
+  } catch {
+    return false
+  }
 }
 
 export function verifyShiprocketWebhook(body: string, token: string): boolean {
-  return token === process.env.SHIPROCKET_WEBHOOK_TOKEN
+  const expected = process.env.SHIPROCKET_WEBHOOK_TOKEN
+  if (!expected) return false
+  return token === expected
 }
 
 export function sanitize(input: string): string {
@@ -46,13 +56,15 @@ export function validatePincode(pincode: string): boolean {
 export function getRateLimit(req: NextRequest) {
   return {
     remaining: req.headers.get('X-RateLimit-Remaining'),
-    limit: req.headers.get('X-RateLimit-Limit'),
+    limit:     req.headers.get('X-RateLimit-Limit'),
   }
 }
 
 export function verifyAdminToken(req: NextRequest): boolean {
-  const token = req.cookies.get('admin_token')?.value
-  return token === process.env.ADMIN_SECRET
+  const token   = req.cookies.get('admin_token')?.value
+  const secret  = process.env.ADMIN_SECRET
+  if (!token || !secret) return false
+  return token === secret
 }
 
 export function validateAmount(amount: number, expectedMin: number, expectedMax: number): boolean {

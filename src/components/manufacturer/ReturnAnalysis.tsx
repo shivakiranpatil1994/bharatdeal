@@ -22,7 +22,7 @@ const REASON_LABELS: Record<string, string> = {
 }
 
 const REASON_COLORS: Record<string, string> = {
-  size: '#E8450A', quality: '#EF4444', colour_diff: '#F5A623',
+  size: '#F15A2B', quality: '#EF4444', colour_diff: '#F5A623',
   wrong_item: '#3B82F6', changed_mind: '#8B5CF6',
 }
 

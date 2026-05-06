@@ -17,7 +17,7 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'statements', label: 'Statements' },
 ]
 
-const CITY_COLORS = ['#E8450A', '#F5A623', '#10B981', '#3B82F6', '#8B5CF6', '#EC4899', '#14B8A6', '#F97316']
+const CITY_COLORS = ['#F15A2B', '#F5A623', '#10B981', '#3B82F6', '#8B5CF6', '#EC4899', '#14B8A6', '#F97316']
 
 function Skeleton({ className = '' }: { className?: string }) {
   return <div className={`animate-pulse rounded-xl bg-gray-100 ${className}`} />
@@ -137,7 +137,7 @@ function FinancesPage() {
           {/* Stats cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { label: 'Total Revenue', value: formatINR(stats.total), icon: TrendingUp, color: 'text-[#E8450A]', bg: 'bg-orange-50' },
+              { label: 'Total Revenue', value: formatINR(stats.total), icon: TrendingUp, color: 'text-[#F15A2B]', bg: 'bg-orange-50' },
               { label: 'Paid Out', value: formatINR(stats.paid), icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50' },
               { label: 'Pending Payout', value: formatINR(stats.pending), icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50' },
               { label: 'Avg Order Value', value: formatINR(stats.avgOrder), icon: Package, color: 'text-blue-600', bg: 'bg-blue-50' },
@@ -156,8 +156,8 @@ function FinancesPage() {
           {aiInsight && (
             <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-100 rounded-2xl p-5">
               <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="w-4 h-4 text-[#E8450A]" />
-                <span className="text-xs font-bold text-[#E8450A] uppercase tracking-wide">AI Revenue Insight</span>
+                <Sparkles className="w-4 h-4 text-[#F15A2B]" />
+                <span className="text-xs font-bold text-[#F15A2B] uppercase tracking-wide">AI Revenue Insight</span>
               </div>
               <p className="text-sm text-gray-700 leading-relaxed">
                 {aiInsight.split('**').map((part, i) =>
@@ -177,7 +177,7 @@ function FinancesPage() {
                   <XAxis dataKey="week" tick={{ fontSize: 11, fill: '#9CA3AF' }} axisLine={false} tickLine={false} />
                   <YAxis tickFormatter={v => `₹${Math.round(v / 100)}`} tick={{ fontSize: 11, fill: '#9CA3AF' }} axisLine={false} tickLine={false} width={60} />
                   <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="revenue" name="revenue" fill="#E8450A" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="revenue" name="revenue" fill="#F15A2B" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -188,7 +188,7 @@ function FinancesPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-5">
                 <div className="flex items-center gap-2 mb-4">
-                  <MapPin className="w-4 h-4 text-[#E8450A]" />
+                  <MapPin className="w-4 h-4 text-[#F15A2B]" />
                   <h2 className="font-semibold text-gray-900">Revenue by City</h2>
                 </div>
                 {mounted && (
@@ -213,7 +213,7 @@ function FinancesPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-center mb-1">
                           <span className="text-sm font-medium text-gray-800 truncate">{city}</span>
-                          <span className="font-['JetBrains_Mono',monospace] text-xs font-bold text-[#E8450A] ml-2">{formatINR(revenue)}</span>
+                          <span className="font-['JetBrains_Mono',monospace] text-xs font-bold text-[#F15A2B] ml-2">{formatINR(revenue)}</span>
                         </div>
                         <div className="w-full bg-gray-100 rounded-full h-1.5">
                           <div className="h-1.5 rounded-full" style={{ width: `${(revenue / cityData[0].revenue) * 100}%`, backgroundColor: CITY_COLORS[i % CITY_COLORS.length] }} />
@@ -246,7 +246,7 @@ function FinancesPage() {
                     <tr key={o.id} className="hover:bg-gray-50">
                       <td className="px-4 py-3 font-mono text-xs text-gray-400">{o.id.slice(0, 8)}…</td>
                       <td className="px-4 py-3 text-gray-600">{o.buyer_city ?? '—'}</td>
-                      <td className="px-4 py-3 font-['JetBrains_Mono',monospace] font-semibold text-[#E8450A]">{formatINR(o.amount_paise)}</td>
+                      <td className="px-4 py-3 font-['JetBrains_Mono',monospace] font-semibold text-[#F15A2B]">{formatINR(o.amount_paise)}</td>
                       <td className="px-4 py-3">
                         <span className={`text-xs px-2 py-0.5 rounded-full border capitalize ${o.status === 'delivered' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'}`}>
                           {o.status === 'delivered' ? 'Paid Out' : 'Pending'}
@@ -307,7 +307,7 @@ function FinancesPage() {
                   <p className="text-xs text-gray-400 mt-0.5">{i === 0 ? 'Current month (in progress)' : 'Statement available'}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="font-['JetBrains_Mono',monospace] text-sm font-bold text-[#E8450A]">
+                  <span className="font-['JetBrains_Mono',monospace] text-sm font-bold text-[#F15A2B]">
                     {formatINR([stats.total, Math.round(stats.total * 0.8), Math.round(stats.total * 0.6), Math.round(stats.total * 0.4)][i])}
                   </span>
                   {i > 0 && (

@@ -52,7 +52,7 @@ export default function ManufacturerLoginPage() {
       <div className="w-full max-w-sm">
         <div className="flex flex-col items-center mb-8">
           <div className="w-14 h-14 rounded-2xl bg-orange-50 border border-orange-100 flex items-center justify-center mb-4">
-            <Factory className="w-7 h-7 text-[#E8450A]" />
+            <Factory className="w-7 h-7 text-[#F15A2B]" />
           </div>
           <h1 className="text-xl font-bold text-gray-900">Manufacturer Portal</h1>
           <p className="text-sm text-gray-500 mt-1 text-center">BharatDeal Intelligence Dashboard</p>
@@ -70,7 +70,7 @@ export default function ManufacturerLoginPage() {
                 placeholder="you@factory.com"
                 autoFocus
                 autoComplete="email"
-                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-gray-100 border border-gray-200 text-gray-800 placeholder:text-gray-400 focus:border-[#E8450A] focus:bg-white focus:outline-none transition-colors"
+                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-gray-100 border border-gray-200 text-gray-800 placeholder:text-gray-400 focus:border-[#F15A2B] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
           </div>
@@ -85,7 +85,7 @@ export default function ManufacturerLoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 autoComplete="current-password"
-                className="w-full pl-9 pr-10 py-2.5 rounded-xl bg-gray-100 border border-gray-200 text-gray-800 placeholder:text-gray-400 focus:border-[#E8450A] focus:bg-white focus:outline-none transition-colors"
+                className="w-full pl-9 pr-10 py-2.5 rounded-xl bg-gray-100 border border-gray-200 text-gray-800 placeholder:text-gray-400 focus:border-[#F15A2B] focus:bg-white focus:outline-none transition-colors"
               />
               <button type="button" onClick={() => setShowPassword((v) => !v)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
@@ -95,7 +95,7 @@ export default function ManufacturerLoginPage() {
           </div>
 
           <button type="submit" disabled={loading || !email.trim() || !password.trim()}
-            className="py-2.5 rounded-xl bg-[#E8450A] hover:bg-orange-700 text-white font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm mt-1">
+            className="py-2.5 rounded-xl bg-[#F15A2B] hover:bg-orange-700 text-white font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm mt-1">
             {loading ? 'Signing in…' : 'Sign In'}
           </button>
 

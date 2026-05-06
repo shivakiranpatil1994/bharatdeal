@@ -4,7 +4,8 @@ import { createSupabaseAdmin } from '@/lib/supabase'
 export async function GET(req: NextRequest) {
   try {
     const cronSecret = req.headers.get('x-cron-secret')
-    if (cronSecret !== process.env.CRON_SECRET) {
+    const expected   = process.env.CRON_SECRET
+    if (!expected || cronSecret !== expected) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -13,7 +14,7 @@ export async function GET(req: NextRequest) {
 
     if (error) {
       console.error('[cron/refresh-stats] error:', error)
-      return NextResponse.json({ error: 'Refresh failed', detail: error.message }, { status: 500 })
+      return NextResponse.json({ error: 'Refresh failed' }, { status: 500 })
     }
 
     return NextResponse.json({
