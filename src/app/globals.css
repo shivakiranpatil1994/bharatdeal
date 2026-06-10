@@ -56,11 +56,11 @@
   --brand-secondary: #F5A623;
   --brand-accent: #10B981;
 
-  /* Backgrounds */
-  --bg-base: #0A0A0F;
-  --bg-surface: #111118;
-  --bg-elevated: #18181F;
-  --bg-border: #2A2A35;
+  /* Backgrounds — modern token layer */
+  --bg-base: #0A0A0A;
+  --bg-surface: #141414;
+  --bg-elevated: #1C1C1C;
+  --bg-border: rgba(255, 255, 255, 0.08);
 
   /* Text */
   --text-primary: #F4F4F5;
@@ -74,23 +74,23 @@
   --info: #3B82F6;
 
   /* shadcn tokens mapped to BharatDeal palette */
-  --background: #0A0A0F;
+  --background: #0A0A0A;
   --foreground: #F4F4F5;
-  --card: #111118;
+  --card: #141414;
   --card-foreground: #F4F4F5;
-  --popover: #111118;
+  --popover: #141414;
   --popover-foreground: #F4F4F5;
   --primary: #E8450A;
   --primary-foreground: #ffffff;
-  --secondary: #18181F;
+  --secondary: #1C1C1C;
   --secondary-foreground: #F4F4F5;
-  --muted: #18181F;
+  --muted: #1C1C1C;
   --muted-foreground: #A1A1AA;
-  --accent: #18181F;
+  --accent: #1C1C1C;
   --accent-foreground: #F4F4F5;
   --destructive: #EF4444;
-  --border: #2A2A35;
-  --input: #2A2A35;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.08);
   --ring: #E8450A;
   --radius: 0.75rem;
   --chart-1: #E8450A;
@@ -98,13 +98,13 @@
   --chart-3: #10B981;
   --chart-4: #3B82F6;
   --chart-5: #8B5CF6;
-  --sidebar: #111118;
+  --sidebar: #111111;
   --sidebar-foreground: #F4F4F5;
   --sidebar-primary: #E8450A;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #18181F;
+  --sidebar-accent: #1C1C1C;
   --sidebar-accent-foreground: #F4F4F5;
-  --sidebar-border: #2A2A35;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
   --sidebar-ring: #E8450A;
 }
 

@@ -1,5 +1,6 @@
 import { createSupabaseAdmin } from '@/lib/supabase'
-import { ShoppingBag, TrendingUp, AlertTriangle, Factory, RefreshCw } from 'lucide-react'
+import { ShoppingBag, TrendingUp, AlertTriangle, Factory, ArrowUpRight } from 'lucide-react'
+import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -14,26 +15,22 @@ async function getPlatformStats() {
   todayStart.setHours(0, 0, 0, 0)
 
   const [ordersRes, revenueRes, manufacturersRes, rtoRes] = await Promise.all([
-    // Orders today
     supabase
       .from('orders')
       .select('id', { count: 'exact', head: true })
       .gte('created_at', todayStart.toISOString()),
 
-    // Revenue today (paid orders only)
     supabase
       .from('orders')
       .select('amount_paise')
       .gte('created_at', todayStart.toISOString())
       .eq('payment_status', 'paid'),
 
-    // Active manufacturers
     supabase
       .from('manufacturers')
       .select('id', { count: 'exact', head: true })
       .eq('active', true),
 
-    // RTO this month
     supabase
       .from('orders')
       .select('id', { count: 'exact', head: true })
@@ -104,14 +101,14 @@ async function getTopManufacturers() {
   return Array.from(map.values()).sort((a, b) => b.revenue - a.revenue).slice(0, 5)
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  placed: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-  confirmed: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-  packed: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-  shipped: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
-  delivered: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-  rto: 'bg-red-500/10 text-red-400 border-red-500/20',
-  cancelled: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
+const STATUS_STYLE: Record<string, { dot: string; text: string }> = {
+  placed:    { dot: 'bg-blue-400',    text: 'text-blue-300' },
+  confirmed: { dot: 'bg-amber-400',   text: 'text-amber-300' },
+  packed:    { dot: 'bg-purple-400',  text: 'text-purple-300' },
+  shipped:   { dot: 'bg-cyan-400',    text: 'text-cyan-300' },
+  delivered: { dot: 'bg-emerald-400', text: 'text-emerald-300' },
+  rto:       { dot: 'bg-red-400',     text: 'text-red-300' },
+  cancelled: { dot: 'bg-zinc-400',    text: 'text-zinc-400' },
 }
 
 export default async function AdminOverviewPage() {
@@ -126,13 +123,43 @@ export default async function AdminOverviewPage() {
       ? ((stats.rtoThisMonth / Math.max(stats.totalOrdersToday, 1)) * 100).toFixed(1)
       : '0.0'
 
+  const kpis = [
+    {
+      label: 'Orders Today',
+      value: stats.ordersToday.toLocaleString('en-IN'),
+      icon: ShoppingBag,
+      accent: false,
+    },
+    {
+      label: 'GMV Today',
+      value: formatINR(stats.revenueToday),
+      icon: TrendingUp,
+      accent: true, // the single hero card
+    },
+    {
+      label: 'RTO This Month',
+      value: `${stats.rtoThisMonth}`,
+      sub: `${rtoRate}% of today's orders`,
+      icon: AlertTriangle,
+      accent: false,
+    },
+    {
+      label: 'Active Manufacturers',
+      value: stats.activeManufacturers.toLocaleString(),
+      icon: Factory,
+      accent: false,
+    },
+  ]
+
   return (
-    <div className="p-6 flex flex-col gap-6 max-w-7xl">
+    <div className="p-6 lg:p-8 flex flex-col gap-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-end justify-between">
         <div>
-          <h1 className="text-xl font-bold text-[var(--text-primary)]">Platform Overview</h1>
-          <p className="text-sm text-[var(--text-tertiary)] mt-0.5">
+          <h1 className="text-2xl font-bold text-white" style={{ letterSpacing: '-0.03em' }}>
+            Overview
+          </h1>
+          <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>
             {new Date().toLocaleDateString('en-IN', {
               weekday: 'long',
               day: 'numeric',
@@ -140,89 +167,78 @@ export default async function AdminOverviewPage() {
             })}
           </p>
         </div>
-        <form action="/api/admin/logout" method="POST">
-          <button
-            type="submit"
-            className="text-xs px-3 py-1.5 rounded-lg border border-[var(--bg-border)] text-[var(--text-tertiary)] hover:text-[var(--danger)] hover:border-red-500/30 transition-colors duration-200"
-          >
-            Sign out
-          </button>
-        </form>
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)' }}>
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
+          </span>
+          <span className="text-xs font-medium text-emerald-300">Live</span>
+        </div>
       </div>
 
       {/* KPI cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          {
-            label: 'Orders Today',
-            value: stats.ordersToday.toLocaleString('en-IN'),
-            icon: ShoppingBag,
-            color: 'text-blue-400',
-            bg: 'bg-blue-500/10',
-          },
-          {
-            label: 'GMV Today',
-            value: formatINR(stats.revenueToday),
-            icon: TrendingUp,
-            color: 'text-[var(--brand-accent)]',
-            bg: 'bg-emerald-500/10',
-          },
-          {
-            label: 'RTO This Month',
-            value: `${stats.rtoThisMonth} (${rtoRate}%)`,
-            icon: AlertTriangle,
-            color: 'text-red-400',
-            bg: 'bg-red-500/10',
-          },
-          {
-            label: 'Active Manufacturers',
-            value: stats.activeManufacturers.toLocaleString(),
-            icon: Factory,
-            color: 'text-amber-400',
-            bg: 'bg-amber-500/10',
-          },
-        ].map(({ label, value, icon: Icon, color, bg }) => (
+        {kpis.map(({ label, value, sub, icon: Icon, accent }) => (
           <div
             key={label}
-            className="bg-[var(--bg-surface)] border border-[var(--bg-border)] rounded-xl p-4 flex flex-col gap-3"
+            className="rounded-2xl p-5 flex flex-col gap-4 transition-transform duration-200 hover:-translate-y-0.5"
+            style={accent
+              ? { background: 'linear-gradient(135deg, #E8450A 0%, #c43a08 100%)', boxShadow: '0 8px 24px rgba(232,69,10,0.25)' }
+              : { background: '#141414', border: '1px solid rgba(255,255,255,0.08)' }
+            }
           >
-            <div className={`w-9 h-9 rounded-lg ${bg} flex items-center justify-center`}>
-              <Icon className={`w-4 h-4 ${color}`} />
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium" style={{ color: accent ? 'rgba(255,255,255,0.75)' : 'rgba(255,255,255,0.4)' }}>
+                {label}
+              </p>
+              <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: accent ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.05)' }}>
+                <Icon className="w-4 h-4" style={{ color: accent ? '#ffffff' : 'rgba(255,255,255,0.6)' }} />
+              </div>
             </div>
             <div>
-              <p className="font-mono text-xl font-bold text-[var(--text-primary)]">{value}</p>
-              <p className="text-xs text-[var(--text-tertiary)] mt-0.5">{label}</p>
+              <p className="font-mono text-2xl font-bold text-white" style={{ letterSpacing: '-0.02em' }}>
+                {value}
+              </p>
+              {sub && (
+                <p className="text-[11px] mt-1" style={{ color: accent ? 'rgba(255,255,255,0.65)' : 'rgba(255,255,255,0.35)' }}>
+                  {sub}
+                </p>
+              )}
             </div>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Recent orders */}
-        <div className="lg:col-span-2 bg-[var(--bg-surface)] border border-[var(--bg-border)] rounded-xl overflow-hidden">
-          <div className="px-5 py-4 border-b border-[var(--bg-border)] flex items-center justify-between">
-            <h2 className="font-semibold text-[var(--text-primary)]">Recent Orders</h2>
-            <a
+        <div className="lg:col-span-2 rounded-2xl overflow-hidden" style={{ background: '#141414', border: '1px solid rgba(255,255,255,0.08)' }}>
+          <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+            <h2 className="font-semibold text-white text-sm" style={{ letterSpacing: '-0.01em' }}>Recent Orders</h2>
+            <Link
               href="/admin/orders"
-              className="text-xs text-[var(--brand-primary)] hover:underline"
+              className="flex items-center gap-1 text-xs font-medium transition-colors hover:text-white"
+              style={{ color: '#E8450A' }}
             >
-              View all →
-            </a>
+              View all <ArrowUpRight className="w-3 h-3" />
+            </Link>
           </div>
           {recentOrders.length === 0 ? (
-            <div className="py-12 flex flex-col items-center gap-2">
-              <ShoppingBag className="w-8 h-8 text-[var(--text-tertiary)]" />
-              <p className="text-sm text-[var(--text-tertiary)]">No orders yet</p>
+            <div className="py-14 flex flex-col items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                <ShoppingBag className="w-5 h-5" style={{ color: 'rgba(255,255,255,0.25)' }} />
+              </div>
+              <p className="text-sm" style={{ color: 'rgba(255,255,255,0.35)' }}>No orders yet</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-[var(--bg-border)]">
+                  <tr>
                     {['Order', 'Product', 'Amount', 'Method', 'Status', 'Time'].map((h) => (
                       <th
                         key={h}
-                        className="px-4 py-3 text-left text-xs font-medium text-[var(--text-tertiary)] uppercase tracking-wide"
+                        className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-widest"
+                        style={{ color: 'rgba(255,255,255,0.3)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}
                       >
                         {h}
                       </th>
@@ -232,33 +248,32 @@ export default async function AdminOverviewPage() {
                 <tbody>
                   {recentOrders.map((order) => {
                     const product = order.products as { title: string } | null
+                    const st = STATUS_STYLE[order.status] ?? STATUS_STYLE.placed
                     return (
                       <tr
                         key={order.id}
-                        className="border-b border-[var(--bg-border)] last:border-0 hover:bg-[var(--bg-elevated)] transition-colors"
+                        className="transition-colors hover:bg-white/[0.03]"
+                        style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
                       >
-                        <td className="px-4 py-3 font-mono text-xs text-[var(--text-secondary)]">
+                        <td className="px-5 py-3.5 font-mono text-xs" style={{ color: 'rgba(255,255,255,0.45)' }}>
                           {order.id.slice(0, 8).toUpperCase()}
                         </td>
-                        <td className="px-4 py-3 text-[var(--text-primary)] max-w-[160px] truncate">
+                        <td className="px-5 py-3.5 text-white max-w-[160px] truncate font-medium">
                           {product?.title ?? '—'}
                         </td>
-                        <td className="px-4 py-3 font-mono text-[var(--brand-primary)]">
+                        <td className="px-5 py-3.5 font-mono font-semibold" style={{ color: '#E8450A' }}>
                           {formatINR(order.amount_paise)}
                         </td>
-                        <td className="px-4 py-3 text-[var(--text-secondary)] uppercase text-xs">
+                        <td className="px-5 py-3.5 uppercase text-[11px] font-medium" style={{ color: 'rgba(255,255,255,0.45)' }}>
                           {order.payment_method}
                         </td>
-                        <td className="px-4 py-3">
-                          <span
-                            className={`text-xs px-2 py-0.5 rounded-full border ${
-                              STATUS_COLORS[order.status] ?? STATUS_COLORS.placed
-                            }`}
-                          >
+                        <td className="px-5 py-3.5">
+                          <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${st.text}`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${st.dot}`} />
                             {order.status}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-xs text-[var(--text-tertiary)] whitespace-nowrap">
+                        <td className="px-5 py-3.5 text-xs whitespace-nowrap" style={{ color: 'rgba(255,255,255,0.35)' }}>
                           {new Date(order.created_at).toLocaleTimeString('en-IN', {
                             hour: '2-digit',
                             minute: '2-digit',
@@ -274,32 +289,37 @@ export default async function AdminOverviewPage() {
         </div>
 
         {/* Top manufacturers today */}
-        <div className="bg-[var(--bg-surface)] border border-[var(--bg-border)] rounded-xl overflow-hidden">
-          <div className="px-5 py-4 border-b border-[var(--bg-border)] flex items-center justify-between">
-            <h2 className="font-semibold text-[var(--text-primary)]">Top Sellers Today</h2>
-            <RefreshCw className="w-3.5 h-3.5 text-[var(--text-tertiary)]" />
+        <div className="rounded-2xl overflow-hidden flex flex-col" style={{ background: '#141414', border: '1px solid rgba(255,255,255,0.08)' }}>
+          <div className="px-5 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+            <h2 className="font-semibold text-white text-sm" style={{ letterSpacing: '-0.01em' }}>Top Sellers Today</h2>
           </div>
           {topMfrs.length === 0 ? (
-            <div className="py-12 flex flex-col items-center gap-2">
-              <Factory className="w-8 h-8 text-[var(--text-tertiary)]" />
-              <p className="text-sm text-[var(--text-tertiary)]">No sales today yet</p>
+            <div className="py-14 flex flex-col items-center gap-3 flex-1 justify-center">
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                <Factory className="w-5 h-5" style={{ color: 'rgba(255,255,255,0.25)' }} />
+              </div>
+              <p className="text-sm" style={{ color: 'rgba(255,255,255,0.35)' }}>No sales today yet</p>
             </div>
           ) : (
-            <div className="divide-y divide-[var(--bg-border)]">
+            <div>
               {topMfrs.map((m, i) => (
-                <div key={m.name} className="px-5 py-3 flex items-center gap-3">
-                  <span className="font-mono text-xs text-[var(--text-tertiary)] w-4">
+                <div key={m.name} className="px-5 py-3.5 flex items-center gap-3 transition-colors hover:bg-white/[0.03]" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                  <div
+                    className="w-7 h-7 rounded-lg flex items-center justify-center font-mono text-xs font-bold flex-shrink-0"
+                    style={i === 0
+                      ? { background: 'rgba(232,69,10,0.15)', color: '#E8450A' }
+                      : { background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.4)' }
+                    }
+                  >
                     {i + 1}
-                  </span>
+                  </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-[var(--text-primary)] truncate">
-                      {m.name}
-                    </p>
-                    <p className="text-xs text-[var(--text-tertiary)]">
+                    <p className="text-sm font-medium text-white truncate">{m.name}</p>
+                    <p className="text-[11px]" style={{ color: 'rgba(255,255,255,0.35)' }}>
                       {m.cluster} · {m.orders} orders
                     </p>
                   </div>
-                  <span className="font-mono text-sm text-[var(--brand-accent)] flex-shrink-0">
+                  <span className="font-mono text-sm font-semibold text-emerald-400 flex-shrink-0">
                     {formatINR(m.revenue)}
                   </span>
                 </div>
