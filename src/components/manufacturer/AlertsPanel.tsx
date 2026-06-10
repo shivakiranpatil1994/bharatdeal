@@ -18,11 +18,11 @@ export function AlertsPanel({ manufacturerId }: { manufacturerId: string }) {
   const { alerts, loading, markRead } = useRealtimeAlerts(manufacturerId)
 
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden flex flex-col">
-      <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+    <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden flex flex-col h-full" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+      <div className="px-5 py-4 border-b border-gray-50 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Bell className="w-4 h-4 text-gray-500" />
-          <h2 className="font-semibold text-gray-900">Alerts</h2>
+          <Bell className="w-4 h-4 text-gray-400" />
+          <h2 className="font-semibold text-gray-900 text-sm" style={{ letterSpacing: '-0.01em' }}>Alerts</h2>
           {alerts.length > 0 && (
             <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[#F15A2B]/10 text-[#F15A2B] border border-[#F15A2B]/20">
               {alerts.length}
@@ -31,7 +31,7 @@ export function AlertsPanel({ manufacturerId }: { manufacturerId: string }) {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto max-h-80">
+      <div className="flex-1 overflow-y-auto max-h-96">
         {loading ? (
           <div className="p-4 space-y-3">
             {[1, 2].map((i) => <div key={i} className="h-16 animate-pulse bg-gray-100 rounded-xl" />)}

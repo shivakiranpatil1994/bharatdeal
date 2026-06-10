@@ -1,30 +1,49 @@
 'use client'
 
 import { useRealtimeOrders } from '@/hooks/useRealtimeOrders'
-import { TrendingUp, ShoppingBag, RefreshCcw, Package } from 'lucide-react'
+import { TrendingUp, ShoppingBag, RefreshCcw, Package, ArrowUpRight, ArrowDownRight } from 'lucide-react'
 import { formatINR } from '@/lib/utils'
 
 function StatCard({
-  label, value, sub, icon: Icon, iconColor, iconBg, loading,
+  label, value, pill, pillTone = 'neutral', icon: Icon, loading,
 }: {
-  label: string; value: string; sub?: string
-  icon: React.ElementType; iconColor: string; iconBg: string; loading: boolean
+  label: string; value: string
+  pill?: string; pillTone?: 'good' | 'bad' | 'neutral'
+  icon: React.ElementType; loading: boolean
 }) {
+  const pillStyles = {
+    good:    'bg-emerald-50 text-emerald-600',
+    bad:     'bg-red-50 text-red-500',
+    neutral: 'bg-gray-100 text-gray-500',
+  }[pillTone]
+  const PillArrow = pillTone === 'bad' ? ArrowDownRight : ArrowUpRight
+
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
-      <div className="flex items-start justify-between mb-4">
-        <div className={`w-10 h-10 rounded-xl ${iconBg} flex items-center justify-center`}>
-          <Icon className={`w-5 h-5 ${iconColor}`} />
+    <div className="bg-white rounded-2xl p-5 border border-gray-100" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+      {/* Label row — like screenshot: icon + label left, period hint right */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <Icon className="w-3.5 h-3.5 text-gray-400" />
+          <span className="text-xs font-medium text-gray-500">{label}</span>
         </div>
+        <span className="text-[10px] text-gray-300 font-medium">Today</span>
       </div>
+
+      {/* Big value */}
       {loading ? (
-        <div className="h-8 w-28 animate-pulse bg-gray-100 rounded-xl mb-1" />
+        <div className="h-8 w-28 animate-pulse bg-gray-100 rounded-xl" />
       ) : (
-        <p className="font-['JetBrains_Mono',monospace] text-2xl font-bold text-gray-900">{value}</p>
+        <p className="font-['JetBrains_Mono',monospace] text-[26px] font-bold text-gray-900 leading-none" style={{ letterSpacing: '-0.02em' }}>
+          {value}
+        </p>
       )}
-      <p className="text-xs text-gray-500 mt-1 font-medium">{label}</p>
-      {sub && !loading && (
-        <p className="text-[10px] text-gray-400 mt-0.5">{sub}</p>
+
+      {/* Change pill */}
+      {pill && !loading && (
+        <span className={`inline-flex items-center gap-0.5 mt-3 text-[10px] font-semibold px-1.5 py-0.5 rounded-md ${pillStyles}`}>
+          <PillArrow className="w-2.5 h-2.5" />
+          {pill}
+        </span>
       )}
     </div>
   )
@@ -44,22 +63,20 @@ export function StatsHeader({ manufacturerId }: { manufacturerId: string }) {
         <span className="text-xs text-gray-400 font-medium">Live · updates in real-time</span>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Orders Today" value={ordersToday.toLocaleString('en-IN')}
-          icon={ShoppingBag} iconColor="text-blue-600" iconBg="bg-blue-50" loading={loading} />
-        <StatCard label="Revenue Today" value={formatINR(revenueTodayPaise)}
-          icon={TrendingUp} iconColor="text-emerald-600" iconBg="bg-emerald-50" loading={loading} />
-        <StatCard label="Returns Today" value={String(returnsToday)}
-          sub={returnRate > 0 ? `${returnRate.toFixed(1)}% return rate` : undefined}
-          icon={RefreshCcw}
-          iconColor={returnRate > 10 ? 'text-red-600' : 'text-amber-600'}
-          iconBg={returnRate > 10 ? 'bg-red-50' : 'bg-amber-50'}
-          loading={loading} />
-        <StatCard label="Total Stock" value={totalStock.toLocaleString('en-IN')}
-          sub={totalStock < 20 ? '⚠ Low stock' : undefined}
-          icon={Package}
-          iconColor={totalStock < 20 ? 'text-red-600' : 'text-purple-600'}
-          iconBg={totalStock < 20 ? 'bg-red-50' : 'bg-purple-50'}
-          loading={loading} />
+        <StatCard label="Orders" value={ordersToday.toLocaleString('en-IN')}
+          pill={ordersToday > 0 ? `${ordersToday} placed` : undefined} pillTone="good"
+          icon={ShoppingBag} loading={loading} />
+        <StatCard label="Revenue" value={formatINR(revenueTodayPaise)}
+          pill={revenueTodayPaise > 0 ? formatINR(revenueTodayPaise) : undefined} pillTone="good"
+          icon={TrendingUp} loading={loading} />
+        <StatCard label="Returns" value={String(returnsToday)}
+          pill={returnRate > 0 ? `${returnRate.toFixed(1)}% rate` : undefined}
+          pillTone={returnRate > 10 ? 'bad' : 'neutral'}
+          icon={RefreshCcw} loading={loading} />
+        <StatCard label="Stock" value={totalStock.toLocaleString('en-IN')}
+          pill={totalStock < 20 ? 'Low stock' : undefined}
+          pillTone={totalStock < 20 ? 'bad' : 'neutral'}
+          icon={Package} loading={loading} />
       </div>
     </div>
   )

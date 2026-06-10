@@ -131,8 +131,12 @@ export default function ManufacturerLayout({ children }: { children: React.React
       <aside className="hidden md:flex flex-col w-64 border-r border-gray-200 bg-white flex-shrink-0 shadow-sm">
         {/* Logo */}
         <div className="h-16 flex items-center px-5 border-b border-gray-100">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="font-['Syne',sans-serif] font-extrabold text-gray-900">
+          <Link href="/" className="flex items-center gap-2.5">
+            <span className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+              style={{ background: 'linear-gradient(135deg, #F15A2B 0%, #F5A623 100%)' }}>
+              <Sparkles className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />
+            </span>
+            <span className="font-['Syne',sans-serif] font-extrabold text-gray-900 tracking-tight">
               Bharat<span className="text-[#F15A2B]">Deal</span>
             </span>
           </Link>
